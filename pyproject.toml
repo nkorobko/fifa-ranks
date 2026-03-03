@@ -1,0 +1,27 @@
+[project]
+name = "fifa-ranks"
+version = "0.1.0"
+description = "FIFA 2v2 player ranking tracker with TrueSkill"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "sqlalchemy>=2.0.25",
+    "alembic>=1.13.0",
+    "openskill>=5.0.0",
+    "pydantic>=2.5.3",
+    "pydantic-settings>=2.1.0",
+    "jinja2>=3.1.3",
+    "python-multipart>=0.0.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.3",
+    "pytest-cov>=4.1.0",
+    "httpx>=0.26.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_backend"
