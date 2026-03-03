@@ -528,6 +528,45 @@ def generate_balanced_matchups(player_ids: list[int], db: Session) -> list[dict]
 
 ---
 
+
+---
+
+## 8b. Telegram Bot (Primary Input Interface)
+
+The Telegram bot is the primary way to log matches. It's a thin client that calls the same REST API — the backend doesn't know or care whether input comes from the web form or the bot.
+
+### Architecture
+
+```
+Telegram Group Chat                Web Dashboard (read-only)
+       │                                │
+       ▼                                ▼
+  Telegram Bot ──── HTTP ────►  FastAPI Backend  ◄──── SQLite
+  (python-telegram-bot v20+)     (same REST API)
+```
+
+### Commands
+
+| Command | Example | Description |
+|---------|---------|-------------|
+| `/match` | `/match Noam Itay vs Ayal Ari 3-1` | Log a match, show rating deltas |
+| `/rank` | `/rank` | Current power rankings |
+| `/stats` | `/stats Noam` | Player profile and stats |
+| `/teams` | `/teams Noam Itay Ayal Ari` | Suggest balanced matchups |
+| `/undo` | `/undo` | Delete last match (with confirmation) |
+| `/awards` | `/awards` | This week's awards |
+| `/today` | `/today` | Today's matches |
+
+### Key Design Decisions
+
+**Fuzzy name matching**: The bot uses Levenshtein distance to catch typos. "/match Noan Itay vs Ayal Ari 3-1" → "Did you mean Noam?" This is critical because phone keyboards make typos inevitable.
+
+**Confirmation for destructive actions**: `/undo` shows the match details and asks for confirmation via inline keyboard (✅/❌) before deleting.
+
+**Automated posting**: The bot auto-posts weekly rankings and awards every Monday morning when the WPI cron job completes.
+
+**Separate process**: The bot runs as its own process (not inside the FastAPI app). This means the web dashboard stays up even if the bot crashes, and vice versa. In Docker, they're two separate services.
+
 ## 9. Frontend Pages
 
 ### Dashboard (Home)
