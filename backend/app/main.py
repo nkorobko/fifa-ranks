@@ -33,6 +33,7 @@ async def health_check():
     return {"status": "ok"}
 
 # Import routers
-from backend.app.routers import matches
+from backend.app.routers import matches, players
 
 app.include_router(matches.router, prefix="/api/v1/matches", tags=["matches"])
+app.include_router(players.router, prefix="/api/v1/players", tags=["players"])
