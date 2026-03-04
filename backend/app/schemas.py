@@ -86,3 +86,17 @@ class MatchListResponse(BaseModel):
     total: int
     limit: int
     offset: int
+
+# Rankings schemas
+class PlayerRanking(BaseModel):
+    rank: int
+    player_id: int
+    player_name: str
+    mu: float
+    sigma: float
+    ordinal: float
+    matches_played: int
+    wins: int
+    losses: int
+    draws: int
+    win_rate: float

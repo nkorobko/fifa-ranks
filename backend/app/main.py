@@ -1,7 +1,9 @@
 """FIFA Ranks — FastAPI application"""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from backend.app.config import settings
+import os
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -18,14 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-async def root():
-    """Root endpoint"""
-    return {
-        "app": settings.APP_NAME,
-        "version": settings.APP_VERSION,
-        "status": "running"
-    }
+# Mount static files (CSS, JS, images)
+static_path = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_path):
+    app.mount("/static", StaticFiles(directory=static_path), name="static")
 
 @app.get("/health")
 async def health_check():
@@ -33,7 +31,12 @@ async def health_check():
     return {"status": "ok"}
 
 # Import routers
-from backend.app.routers import matches, players
+from backend.app.routers import matches, players, rankings, pages
 
+# API routes
 app.include_router(matches.router, prefix="/api/v1/matches", tags=["matches"])
 app.include_router(players.router, prefix="/api/v1/players", tags=["players"])
+app.include_router(rankings.router, prefix="/api/v1/rankings", tags=["rankings"])
+
+# Web page routes (must come last to avoid shadowing API routes)
+app.include_router(pages.router, tags=["pages"])
