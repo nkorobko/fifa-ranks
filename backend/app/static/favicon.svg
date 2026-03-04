@@ -1,21 +1,26 @@
 <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <!-- Gradient background similar to FC25 branding -->
+  <!-- Purple/Pink gradient background matching EA FC -->
   <defs>
     <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#00ff87;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#60efff;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#0066ff;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#d946ef;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
     </linearGradient>
   </defs>
   
   <!-- Background -->
-  <rect width="64" height="64" rx="12" fill="url(#bg-gradient)"/>
+  <rect width="64" height="64" fill="url(#bg-gradient)"/>
   
-  <!-- FC Logo (simplified angular design) -->
-  <g transform="translate(12, 16) scale(0.8)">
-    <path d="M 0,0 L 10,15 L 0,30 L 5,30 L 15,15 L 5,0 Z" fill="white"/>
-    <path d="M 15,0 L 25,0 L 25,10 L 20,10 L 20,5 L 15,5 Z" fill="white"/>
-    <path d="M 15,12 L 25,12 L 25,18 L 15,18 Z" fill="white"/>
-    <path d="M 25,0 L 40,15 L 30,30 L 25,30 L 35,15 L 25,5 Z" fill="white"/>
+  <!-- EA FC Logo (angular design) -->
+  <g transform="translate(8, 12)">
+    <!-- Left triangle/arrow -->
+    <polygon points="0,8 12,20 0,32 6,32 18,20 6,8" fill="white"/>
+    
+    <!-- F shape -->
+    <rect x="20" y="8" width="14" height="4" fill="white"/>
+    <rect x="20" y="8" width="4" height="24" fill="white"/>
+    <rect x="20" y="18" width="12" height="4" fill="white"/>
+    
+    <!-- Right C shape -->
+    <path d="M 36,8 L 48,8 L 48,12 L 40,12 L 40,28 L 48,28 L 48,32 L 36,32 Z" fill="white"/>
   </g>
 </svg>
