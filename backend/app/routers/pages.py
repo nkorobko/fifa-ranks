@@ -7,7 +7,7 @@ from sqlalchemy import func, and_
 from datetime import datetime, timedelta
 
 from backend.app.database import get_db
-from backend.app.models import Player, Match, RatingHistory
+from backend.app.models import Player, Match, RatingHistory, PairStats
 
 router = APIRouter()
 templates = Jinja2Templates(directory="backend/app/templates")
@@ -380,5 +380,54 @@ async def log_match_page(request: Request, db: Session = Depends(get_db)):
         {
             "request": request,
             "players": players,
+        }
+    )
+
+
+@router.get("/chemistry", response_class=HTMLResponse)
+async def chemistry_page(request: Request, db: Session = Depends(get_db)):
+    """Team chemistry and partnerships page"""
+    
+    # Get all players for the partner finder
+    players = db.query(Player).order_by(Player.name).all()
+    
+    # Get best partnerships (min 3 matches)
+    pairs = db.query(PairStats).filter(PairStats.matches_played >= 3).all()
+    
+    best_pairs = []
+    worst_pairs = []
+    
+    for pair in pairs:
+        win_rate = (pair.wins / pair.matches_played * 100) if pair.matches_played > 0 else 0
+        goal_diff = pair.goals_for - pair.goals_against
+        
+        pair_data = {
+            "player1_id": pair.player1_id,
+            "player1_name": pair.player1.name,
+            "player2_id": pair.player2_id,
+            "player2_name": pair.player2.name,
+            "matches_played": pair.matches_played,
+            "wins": pair.wins,
+            "losses": pair.matches_played - pair.wins,
+            "win_rate": win_rate,
+            "goal_difference": goal_diff,
+        }
+        
+        best_pairs.append(pair_data)
+        worst_pairs.append(pair_data)
+    
+    # Sort best by win rate (descending)
+    best_pairs.sort(key=lambda x: (x["win_rate"], x["matches_played"]), reverse=True)
+    
+    # Sort worst by win rate (ascending)
+    worst_pairs.sort(key=lambda x: x["win_rate"])
+    
+    return templates.TemplateResponse(
+        "chemistry.html",
+        {
+            "request": request,
+            "players": players,
+            "best_pairs": best_pairs,
+            "worst_pairs": worst_pairs,
         }
     )

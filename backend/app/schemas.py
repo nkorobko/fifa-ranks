@@ -100,3 +100,29 @@ class PlayerRanking(BaseModel):
     losses: int
     draws: int
     win_rate: float
+
+# Chemistry schemas
+class PairChemistry(BaseModel):
+    player1_id: int
+    player1_name: str
+    player2_id: int
+    player2_name: str
+    matches_played: int
+    wins: int
+    losses: int
+    win_rate: float
+    goals_for: int
+    goals_against: int
+    goal_difference: int
+    avg_goals_per_match: float
+    last_played: Optional[datetime] = None
+
+class PartnerSuggestion(BaseModel):
+    partner_id: int
+    partner_name: str
+    matches_together: int
+    wins_together: int
+    win_rate: float
+    goal_difference: int
+    chemistry_score: float
+    recommendation: str
