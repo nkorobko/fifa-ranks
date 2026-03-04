@@ -57,7 +57,7 @@ async def match_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         match_data = parse_match_command(update.message.text)
         
         # Call API to log match
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             # Get player IDs by name
             players_resp = await client.get(f"{API_BASE}/players")
             players_resp.raise_for_status()
@@ -107,7 +107,7 @@ async def match_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def rank_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /rank command - show power rankings"""
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             resp = await client.get(f"{API_BASE}/players")
             resp.raise_for_status()
             players = resp.json()
@@ -147,7 +147,7 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             return
         
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             # Get all players
             players_resp = await client.get(f"{API_BASE}/players")
             players_resp.raise_for_status()
@@ -188,7 +188,7 @@ async def teams_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Parse player names
         player_names = parse_teams_command(update.message.text)
         
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             # Get all players
             players_resp = await client.get(f"{API_BASE}/players")
             players_resp.raise_for_status()
@@ -268,7 +268,7 @@ async def teams_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def streak_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /streak command - show everyone's current streaks"""
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             resp = await client.get(f"{API_BASE}/players")
             resp.raise_for_status()
             players = resp.json()
@@ -291,7 +291,7 @@ async def today_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         today = datetime.utcnow().date()
         tomorrow = today + timedelta(days=1)
         
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             resp = await client.get(
                 f"{API_BASE}/matches",
                 params={
@@ -316,7 +316,7 @@ async def today_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def undo_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /undo command - delete last match with confirmation"""
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             # Get the most recent match
             resp = await client.get(f"{API_BASE}/matches", params={"limit": 1})
             resp.raise_for_status()
@@ -384,7 +384,7 @@ async def undo_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     match_id = int(data.split(":")[1])
     
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             resp = await client.delete(f"{API_BASE}/matches/{match_id}")
             resp.raise_for_status()
             
