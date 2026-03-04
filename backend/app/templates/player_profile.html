@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}{{ player.name }} - FIFA Ranks{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Back button -->
+    <div class="mb-4">
+        <a href="/rankings" class="text-blue-600 dark:text-blue-400 hover:underline">
+            ← Back to Rankings
+        </a>
+    </div>
+
+    <!-- Player header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-800 dark:to-gray-800 rounded-lg shadow-lg p-8 mb-8 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">{{ player.name }}</h1>
+                <div class="flex items-center space-x-4 text-lg">
+                    <span class="flex items-center">
+                        {% if player.rank == 1 %}🥇
+                        {% elif player.rank == 2 %}🥈
+                        {% elif player.rank == 3 %}🥉
+                        {% else %}#{{ player.rank }}{% endif %}
+                        Rank {{ player.rank }}
+                    </span>
+                    <span>•</span>
+                    <span>{{ player.matches_played }} matches</span>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="text-5xl font-bold">{{ "%.1f"|format(player.ordinal) }}</div>
+                <div class="text-sm opacity-80">Rating</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <!-- Record -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
+            <div class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-1">
+                {{ player.wins }}-{{ player.losses }}-{{ player.draws }}
+            </div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">W-L-D Record</div>
+        </div>
+
+        <!-- Win Rate -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
+            <div class="text-2xl font-bold {% if player.win_rate >= 60 %}text-green-600 dark:text-green-400{% elif player.win_rate >= 40 %}text-yellow-600 dark:text-yellow-400{% else %}text-red-600 dark:text-red-400{% endif %} mb-1">
+                {{ "%.1f"|format(player.win_rate) }}%
+            </div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Win Rate</div>
+        </div>
+
+        <!-- Skill (mu) -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
+            <div class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-1">
+                {{ "%.1f"|format(player.mu) }}
+            </div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Skill (μ)</div>
+        </div>
+
+        <!-- Certainty -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
+            <div class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-1">
+                {{ "%.2f"|format(player.sigma) }}
+            </div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Uncertainty (σ)</div>
+        </div>
+    </div>
+
+    <!-- Recent Matches -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Recent Matches</h2>
+        
+        {% if recent_matches %}
+        <div class="space-y-4">
+            {% for match in recent_matches %}
+            <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <div class="flex items-center justify-between">
+                    <!-- Match details -->
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-4">
+                            <!-- Result badge -->
+                            {% if match.result == 'win' %}
+                            <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-sm font-semibold rounded-full">WIN</span>
+                            {% elif match.result == 'loss' %}
+                            <span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-sm font-semibold rounded-full">LOSS</span>
+                            {% else %}
+                            <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 text-sm font-semibold rounded-full">DRAW</span>
+                            {% endif %}
+
+                            <!-- Teams -->
+                            <div class="text-sm">
+                                <span class="font-medium text-gray-800 dark:text-gray-100">
+                                    {{ match.partner_name }}
+                                </span>
+                                <span class="text-gray-500 dark:text-gray-400"> & {{ player.name }}</span>
+                                <span class="mx-2 text-gray-400">vs</span>
+                                <span class="text-gray-700 dark:text-gray-300">
+                                    {{ match.opponent1_name }} & {{ match.opponent2_name }}
+                                </span>
+                            </div>
+
+                            <!-- Score -->
+                            <div class="font-bold text-gray-800 dark:text-gray-100">
+                                {{ match.player_score }}-{{ match.opponent_score }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        {{ match.played_at.strftime('%b %d') }}
+                    </div>
+                </div>
+
+                <!-- Rating change -->
+                {% if match.rating_change %}
+                <div class="mt-2 text-xs {% if match.rating_change > 0 %}text-green-600 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %}">
+                    Rating: {{ "%+.1f"|format(match.rating_change) }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-500 dark:text-gray-400 text-center py-8">No matches yet</p>
+        {% endif %}
+    </div>
+
+    <!-- Stats explanation -->
+    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">ℹ️ About These Stats</h3>
+        <ul class="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+            <li><strong>Rating:</strong> Conservative skill estimate (μ - 3σ). Used for rankings.</li>
+            <li><strong>Skill (μ):</strong> Your estimated skill level. Increases with wins.</li>
+            <li><strong>Uncertainty (σ):</strong> How confident the system is. Decreases as you play more.</li>
+            <li><strong>Win Rate:</strong> Percentage of non-draw matches won.</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

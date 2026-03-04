@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Recent Matches - FIFA Ranks{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">📊 Recent Matches</h2>
+            <p class="text-gray-600 dark:text-gray-400">Last {{ matches|length }} matches played</p>
+        </div>
+        <a href="/log-match" class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">
+            ➕ Log Match
+        </a>
+    </div>
+
+    <!-- Matches list -->
+    <div class="space-y-4">
+        {% for match in matches %}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <!-- Match details -->
+                <div class="flex-1">
+                    <div class="flex items-center justify-between mb-4">
+                        <!-- Team 1 -->
+                        <div class="flex-1 text-center">
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">Team 1</div>
+                            <div class="space-y-1">
+                                <div>
+                                    <a href="/players/{{ match.team1_player1_id }}" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                                        {{ match.team1_player1_name }}
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="/players/{{ match.team1_player2_id }}" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                                        {{ match.team1_player2_name }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Score -->
+                        <div class="px-8">
+                            <div class="text-4xl font-bold text-gray-800 dark:text-gray-100">
+                                <span class="{% if match.winner == 'team1' %}text-green-600 dark:text-green-400{% elif match.winner == 'draw' %}text-gray-500{% endif %}">
+                                    {{ match.team1_score }}
+                                </span>
+                                <span class="text-gray-400 dark:text-gray-600 mx-2">-</span>
+                                <span class="{% if match.winner == 'team2' %}text-green-600 dark:text-green-400{% elif match.winner == 'draw' %}text-gray-500{% endif %}">
+                                    {{ match.team2_score }}
+                                </span>
+                            </div>
+                            {% if match.winner == 'draw' %}
+                            <div class="text-xs text-gray-500 dark:text-gray-400 text-center mt-1">Draw</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Team 2 -->
+                        <div class="flex-1 text-center">
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">Team 2</div>
+                            <div class="space-y-1">
+                                <div>
+                                    <a href="/players/{{ match.team2_player1_id }}" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                                        {{ match.team2_player1_name }}
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="/players/{{ match.team2_player2_id }}" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                                        {{ match.team2_player2_name }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Match metadata -->
+                    <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center space-x-4">
+                            <span>🕒 {{ match.played_at.strftime('%b %d, %Y at %H:%M') }}</span>
+                            {% if match.logged_by %}
+                            <span>👤 Logged by {{ match.logged_by }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="text-xs text-gray-400 dark:text-gray-500">
+                            Match #{{ match.id }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center">
+            <div class="text-6xl mb-4">⚽</div>
+            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">No matches yet</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Start logging matches to see them here!</p>
+            <a href="/log-match" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg">
+                Log Your First Match
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination info -->
+    {% if matches|length > 0 %}
+    <div class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+        Showing {{ matches|length }} most recent matches
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
