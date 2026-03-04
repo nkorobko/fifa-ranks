@@ -1,8 +1,7 @@
 """TrueSkill rating calculation engine using openskill"""
-from typing import List, Tuple
+from typing import List, Tuple, Any
 from sqlalchemy.orm import Session
 from openskill.models import PlackettLuce
-from openskill import Rating
 
 from backend.app.models import Match, Player, RatingHistory
 from backend.app.config import settings
@@ -17,7 +16,7 @@ model = PlackettLuce(
 )
 
 
-def get_current_rating(player_id: int, db: Session) -> Rating:
+def get_current_rating(player_id: int, db: Session) -> Any:
     """Get a player's current rating or return defaults for new players"""
     latest = (
         db.query(RatingHistory)
@@ -27,10 +26,10 @@ def get_current_rating(player_id: int, db: Session) -> Rating:
     )
     
     if latest:
-        return Rating(mu=latest.mu, sigma=latest.sigma)
+        return model.rating(mu=latest.mu, sigma=latest.sigma)
     else:
         # New player defaults
-        return Rating(mu=settings.TRUESKILL_MU, sigma=settings.TRUESKILL_SIGMA)
+        return model.rating(mu=settings.TRUESKILL_MU, sigma=settings.TRUESKILL_SIGMA)
 
 
 def update_ratings(match: Match, db: Session) -> dict:
