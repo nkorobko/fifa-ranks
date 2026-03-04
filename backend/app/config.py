@@ -13,6 +13,13 @@ class Settings(BaseSettings):
     TRUESKILL_BETA: float = 4.167  # sigma / 2
     TRUESKILL_TAU: float = 0.083   # sigma / 100 (skill decay per match)
     
+    # API Server
+    API_HOST: str = "localhost"
+    API_PORT: int = 8000
+    
+    # Telegram Bot
+    TELEGRAM_BOT_TOKEN: str = ""  # Required for bot to run
+    
     # App
     APP_NAME: str = "FIFA Ranks"
     APP_VERSION: str = "0.1.0"

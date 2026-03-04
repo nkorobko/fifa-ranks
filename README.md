@@ -41,6 +41,7 @@ Visit http://localhost:8000 — you should see the app running.
 docker-compose up
 
 # Server runs at http://localhost:8000
+# Telegram bot starts automatically (requires TELEGRAM_BOT_TOKEN)
 ```
 
 ### Health Check
@@ -49,6 +50,64 @@ docker-compose up
 curl http://localhost:8000/health
 # Response: {"status": "ok"}
 ```
+
+## Telegram Bot Setup
+
+The Telegram bot is the **primary way to log matches**.
+
+### 1. Create a Bot
+
+1. Open Telegram and message [@BotFather](https://t.me/botfather)
+2. Send `/newbot`
+3. Choose a name (e.g., "FIFA Ranks")
+4. Choose a username (e.g., "your_office_fifa_bot")
+5. Copy the bot token (looks like `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11`)
+
+### 2. Configure Environment
+
+```bash
+# Copy example env file
+cp .env.example .env
+
+# Edit .env and add your bot token
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+```
+
+### 3. Run the Bot
+
+```bash
+# With Docker (recommended)
+docker-compose up
+
+# Or manually
+python -m backend.bot.main
+```
+
+### 4. Start Logging Matches
+
+Add the bot to your office group chat, then:
+
+```
+/match Noam Itay vs Ayal Ari 3-1
+/rank
+/stats Noam
+/teams Noam Itay Ayal Ari
+```
+
+See `/help` for all commands.
+
+## Bot Commands
+
+| Command | Example | Description |
+|---------|---------|-------------|
+| `/match` | `/match Noam Itay vs Ayal Ari 3-1` | Log a match result |
+| `/rank` | `/rank` | Show current power rankings |
+| `/stats` | `/stats Noam` | Player stats and rating |
+| `/teams` | `/teams Noam Itay Ayal Ari` | Suggest balanced 2v2 matchups |
+| `/streak` | `/streak` | Everyone's current win/loss streak |
+| `/today` | `/today` | All matches played today |
+| `/undo` | `/undo` | Delete last match (with confirmation) |
+| `/help` | `/help` | List all commands |
 
 ## Project Structure
 

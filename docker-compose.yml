@@ -12,3 +12,16 @@ services:
       - DATABASE_URL=sqlite:///./fifa.db
       - DEBUG=true
     command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
+  
+  bot:
+    build: .
+    depends_on:
+      - app
+    volumes:
+      - .:/app
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - API_HOST=app
+      - API_PORT=8000
+    command: python -m backend.bot.main
+    restart: unless-stopped
