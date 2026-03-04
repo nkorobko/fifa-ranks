@@ -12,7 +12,20 @@ from backend.app.config import settings
 router = APIRouter()
 
 # Response schemas
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+
+class PlayerCreate(BaseModel):
+    name: str
+    
+    @field_validator('name')
+    @classmethod
+    def validate_name(cls, v):
+        v = v.strip()
+        if len(v) < 2:
+            raise ValueError('Player name must be at least 2 characters')
+        if len(v) > 50:
+            raise ValueError('Player name must be at most 50 characters')
+        return v
 
 class PlayerStats(BaseModel):
     id: int
@@ -202,6 +215,40 @@ async def list_players(db: Session = Depends(get_db)):
         ))
     
     return result
+
+
+@router.post("/", response_model=PlayerStats)
+async def create_player(player: PlayerCreate, db: Session = Depends(get_db)):
+    """
+    Create a new player
+    """
+    # Check if player name already exists
+    existing = db.query(Player).filter(Player.name == player.name).first()
+    if existing:
+        raise HTTPException(status_code=400, detail=f"Player '{player.name}' already exists")
+    
+    # Create new player
+    new_player = Player(name=player.name)
+    db.add(new_player)
+    db.commit()
+    db.refresh(new_player)
+    
+    # Return with default ratings
+    return PlayerStats(
+        id=new_player.id,
+        name=new_player.name,
+        mu=settings.TRUESKILL_MU,
+        sigma=settings.TRUESKILL_SIGMA,
+        ordinal=settings.TRUESKILL_MU - 3 * settings.TRUESKILL_SIGMA,
+        matches_played=0,
+        wins=0,
+        draws=0,
+        losses=0,
+        win_rate=0.0,
+        goals_for=0,
+        goals_against=0
+    )
+
 
 @router.get("/{player_id}", response_model=PlayerProfile)
 async def get_player_profile(player_id: int, db: Session = Depends(get_db)):
