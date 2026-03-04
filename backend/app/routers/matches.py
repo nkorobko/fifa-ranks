@@ -6,7 +6,8 @@ from typing import Optional
 
 from backend.app.database import get_db
 from backend.app.models import Match, Player, PairStats
-from backend.app.schemas import MatchCreate, MatchResponse, MatchListResponse, MatchListItem
+from backend.app.schemas import MatchCreate, MatchResponse, MatchListResponse, MatchListItem, RatingChange
+from backend.app import ranking
 
 router = APIRouter()
 
@@ -91,11 +92,35 @@ async def log_match(match: MatchCreate, db: Session = Depends(get_db)):
     update_pair_stats(db, t1p1.id, t1p2.id, team1_won, match.team1_score, match.team2_score, played_at)
     update_pair_stats(db, t2p1.id, t2p2.id, team2_won, match.team2_score, match.team1_score, played_at)
     
-    # TODO: TrueSkill rating update (Issue #5)
-    # For now, we'll return empty rating_changes
+    # Update TrueSkill ratings
+    rating_deltas = ranking.update_ratings(new_match, db)
     
     db.commit()
     db.refresh(new_match)
+    
+    # Build rating changes for response
+    rating_changes = [
+        RatingChange(
+            player_name=t1p1.name,
+            ordinal_delta=rating_deltas[t1p1.id]["ordinal_delta"],
+            new_ordinal=rating_deltas[t1p1.id]["new_ordinal"]
+        ),
+        RatingChange(
+            player_name=t1p2.name,
+            ordinal_delta=rating_deltas[t1p2.id]["ordinal_delta"],
+            new_ordinal=rating_deltas[t1p2.id]["new_ordinal"]
+        ),
+        RatingChange(
+            player_name=t2p1.name,
+            ordinal_delta=rating_deltas[t2p1.id]["ordinal_delta"],
+            new_ordinal=rating_deltas[t2p1.id]["new_ordinal"]
+        ),
+        RatingChange(
+            player_name=t2p2.name,
+            ordinal_delta=rating_deltas[t2p2.id]["ordinal_delta"],
+            new_ordinal=rating_deltas[t2p2.id]["new_ordinal"]
+        ),
+    ]
     
     # Build response
     response = MatchResponse(
@@ -109,7 +134,7 @@ async def log_match(match: MatchCreate, db: Session = Depends(get_db)):
         team2_score=new_match.team2_score,
         logged_by=new_match.logged_by,
         created_at=new_match.created_at,
-        rating_changes=[]  # Will be populated by TrueSkill engine in #5
+        rating_changes=rating_changes
     )
     
     return response
@@ -221,6 +246,7 @@ async def delete_match(match_id: int, db: Session = Depends(get_db)):
     
     Sets is_deleted=True instead of actually removing the record.
     This preserves historical data and allows for rating recalculation.
+    All ratings are recalculated from scratch after deletion.
     """
     match = db.query(Match).filter(Match.id == match_id).first()
     
@@ -233,4 +259,7 @@ async def delete_match(match_id: int, db: Session = Depends(get_db)):
     match.is_deleted = True
     db.commit()
     
-    return {"success": True, "message": f"Match {match_id} soft-deleted"}
+    # Recalculate all ratings from scratch
+    ranking.recalculate_all_ratings(db)
+    
+    return {"success": True, "message": f"Match {match_id} soft-deleted and ratings recalculated"}

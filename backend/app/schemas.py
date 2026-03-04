@@ -48,11 +48,8 @@ class MatchCreate(BaseModel):
 
 class RatingChange(BaseModel):
     player_name: str
-    old_mu: float
-    old_sigma: float
-    new_mu: float
-    new_sigma: float
-    delta_ordinal: float
+    ordinal_delta: float  # Change in conservative rating (mu - 3*sigma)
+    new_ordinal: float    # New conservative rating after match
 
 class MatchResponse(BaseModel):
     id: int
