@@ -3,13 +3,13 @@ from datetime import datetime
 from typing import List, Dict, Any
 
 
-def format_match_logged(match_data: dict, rating_changes: dict) -> str:
+def format_match_logged(match_data: dict, rating_changes: list) -> str:
     """
     Format a successful match log message.
     
     Args:
         match_data: Match object from API
-        rating_changes: Dict of player_id -> {mu_delta, sigma_delta, ordinal_delta, new_ordinal}
+        rating_changes: List of rating change objects with player_name, ordinal_delta, new_ordinal
     
     Returns:
         Formatted message string
@@ -29,28 +29,17 @@ def format_match_logged(match_data: dict, rating_changes: dict) -> str:
     
     # Team names and scores
     msg += (
-        f"**{match_data['team1_player1_name']}** + **{match_data['team1_player2_name']}**  "
+        f"**{match_data['team1_player1']}** + **{match_data['team1_player2']}**  "
         f"`{team1_score}` - `{team2_score}`  "
-        f"**{match_data['team2_player1_name']}** + **{match_data['team2_player2_name']}**\n\n"
+        f"**{match_data['team2_player1']}** + **{match_data['team2_player2']}**\n\n"
     )
     
     # Rating changes
     msg += "📊 **Rating changes:**\n"
     
     # Format each player's rating change
-    for player_id_str, change in rating_changes.items():
-        player_id = int(player_id_str)
-        
-        # Find player name from match data
-        if player_id == match_data["team1_player1_id"]:
-            name = match_data["team1_player1_name"]
-        elif player_id == match_data["team1_player2_id"]:
-            name = match_data["team1_player2_name"]
-        elif player_id == match_data["team2_player1_id"]:
-            name = match_data["team2_player1_name"]
-        else:
-            name = match_data["team2_player2_name"]
-        
+    for change in rating_changes:
+        name = change["player_name"]
         delta = change["ordinal_delta"]
         new_ordinal = change["new_ordinal"]
         old_ordinal = new_ordinal - delta

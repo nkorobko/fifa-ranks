@@ -58,35 +58,24 @@ async def match_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         # Call API to log match
         async with httpx.AsyncClient(follow_redirects=True) as client:
-            # Get player IDs by name
-            players_resp = await client.get(f"{API_BASE}/players")
-            players_resp.raise_for_status()
-            players = players_resp.json()
-            
-            # Build name -> id map
-            name_to_id = {p["name"]: p["id"] for p in players}
-            
-            # Prepare match payload
+            # Prepare match payload (API expects player names in arrays)
             payload = {
-                "team1_player1_id": name_to_id[match_data["team1_player1"]],
-                "team1_player2_id": name_to_id[match_data["team1_player2"]],
-                "team2_player1_id": name_to_id[match_data["team2_player1"]],
-                "team2_player2_id": name_to_id[match_data["team2_player2"]],
+                "team1": [match_data["team1_player1"], match_data["team1_player2"]],
+                "team2": [match_data["team2_player1"], match_data["team2_player2"]],
                 "team1_score": match_data["team1_score"],
                 "team2_score": match_data["team2_score"],
-                "played_at": now.isoformat(),
             }
             
             # Log match
             match_resp = await client.post(f"{API_BASE}/matches", json=payload)
             match_resp.raise_for_status()
-            result = match_resp.json()
+            match = match_resp.json()
             
             # Update rate limit
             last_match_time[user_id] = now
             
             # Format and send response
-            message = format_match_logged(result["match"], result["rating_changes"])
+            message = format_match_logged(match, match.get("rating_changes", []))
             await update.message.reply_text(message, parse_mode="Markdown")
             
     except ValueError as e:
