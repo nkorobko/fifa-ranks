@@ -12,7 +12,10 @@
 
     <!-- Player selection -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
-        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Select 4 Players</h3>
+        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Select 4-6 Players</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            4 players = matchup suggestions • 5 players = rotation schedule • 6 players = tournament bracket
+        </p>
         
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
             {% for player in players %}
@@ -28,13 +31,13 @@
 
         <div class="flex justify-between items-center">
             <div id="selection-count" class="text-sm text-gray-600 dark:text-gray-400">
-                Selected: <span id="count">0</span>/4
+                Selected: <span id="count">0</span> (need 4-6)
             </div>
             <button onclick="generateTeams()" 
                     id="generate-btn"
                     disabled
                     class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
-                Generate Teams
+                Generate Schedule
             </button>
         </div>
     </div>
@@ -73,12 +76,12 @@
             playerNames.delete(playerId);
             button.classList.remove('selected');
         } else {
-            if (selectedPlayers.size < 4) {
+            if (selectedPlayers.size < 6) {
                 selectedPlayers.add(playerId);
                 playerNames.set(playerId, playerName);
                 button.classList.add('selected');
             } else {
-                alert('You can only select 4 players');
+                alert('You can select up to 6 players');
                 return;
             }
         }
@@ -87,8 +90,10 @@
     }
 
     function updateUI() {
-        document.getElementById('count').textContent = selectedPlayers.size;
-        document.getElementById('generate-btn').disabled = selectedPlayers.size !== 4;
+        const count = selectedPlayers.size;
+        document.getElementById('count').textContent = count;
+        // Enable button if 4, 5, or 6 players selected
+        document.getElementById('generate-btn').disabled = count < 4 || count > 6;
     }
 
     async function generateTeams() {
@@ -113,18 +118,95 @@
             }
 
             const data = await response.json();
-            displayMatchups(data.matchups);
+            
+            // Check if it's a rotation schedule or regular matchups
+            if (data.type && (data.type === 'rotation_5' || data.type === 'tournament_6')) {
+                displayRotationSchedule(data);
+            } else {
+                displayMatchups(data.matchups);
+            }
         } catch (err) {
             console.error(err);
             alert('Network error. Please try again.');
         }
     }
 
+    function displayRotationSchedule(schedule) {
+        const container = document.getElementById('matchups-container');
+        const results = document.getElementById('results');
+        
+        // Header
+        let html = `
+            <div class="bg-gradient-to-r from-purple-600 to-purple-800 dark:from-purple-800 dark:to-gray-800 rounded-lg shadow-lg p-6 mb-6 text-white">
+                <h3 class="text-2xl font-bold mb-2">🎮 ${schedule.type === 'rotation_5' ? '5-Player Rotation' : '6-Player Tournament'}</h3>
+                <p class="text-lg">${schedule.description}</p>
+                <p class="text-sm mt-2 opacity-80">${schedule.total_games} games total${schedule.avg_balance ? ` • Avg balance: ${schedule.avg_balance.toFixed(0)}/100` : ''}</p>
+            </div>
+        `;
+        
+        // Games
+        html += schedule.games.map(game => `
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="text-xl font-bold text-gray-800 dark:text-gray-100">Game ${game.game_number}</h4>
+                    ${game.sitting_out ? `
+                        <span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 rounded-full text-sm font-semibold">
+                            ${game.sitting_out.name} sits out
+                        </span>
+                    ` : ''}
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4 items-center">
+                    <!-- Team 1 -->
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 dark:border-blue-400 rounded-lg p-4">
+                        <div class="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-2">Team 1</div>
+                        <div class="space-y-1">
+                            <div class="font-medium text-gray-800 dark:text-gray-100">${game.matchup.team1.player1_name}</div>
+                            <div class="font-medium text-gray-800 dark:text-gray-100">${game.matchup.team1.player2_name}</div>
+                        </div>
+                    </div>
+
+                    <!-- VS + Details -->
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-gray-400 dark:text-gray-600 mb-2">VS</div>
+                        <div class="text-xs space-y-1">
+                            <div class="text-gray-600 dark:text-gray-400">
+                                Win prob: ${(game.matchup.predicted_win_prob * 100).toFixed(0)}% - ${((1 - game.matchup.predicted_win_prob) * 100).toFixed(0)}%
+                            </div>
+                            <div>
+                                <span class="px-2 py-1 rounded text-xs font-semibold ${
+                                    game.matchup.fairness === 'Excellent' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
+                                    game.matchup.fairness === 'Good' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' :
+                                    'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300'
+                                }">
+                                    ${game.matchup.fairness}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team 2 -->
+                    <div class="bg-red-50 dark:bg-red-900/20 border-2 border-red-500 dark:border-red-400 rounded-lg p-4">
+                        <div class="text-xs text-red-600 dark:text-red-400 font-semibold mb-2">Team 2</div>
+                        <div class="space-y-1">
+                            <div class="font-medium text-gray-800 dark:text-gray-100">${game.matchup.team2.player1_name}</div>
+                            <div class="font-medium text-gray-800 dark:text-gray-100">${game.matchup.team2.player2_name}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = html;
+        results.classList.remove('hidden');
+        results.scrollIntoView({ behavior: 'smooth' });
+    }
+
     function displayMatchups(matchups) {
         const container = document.getElementById('matchups-container');
         const results = document.getElementById('results');
 
-        if (matchups.length === 0) {
+        if (!matchups || matchups.length === 0) {
             container.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No matchups generated</p>';
             results.classList.remove('hidden');
             return;

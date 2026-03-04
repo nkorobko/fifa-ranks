@@ -19,22 +19,30 @@ class TeamGeneratorRequest(BaseModel):
 @router.post("/generate")
 async def generate_teams(request: TeamGeneratorRequest, db: Session = Depends(get_db)):
     """
-    Generate balanced 2v2 team matchups.
+    Generate balanced 2v2 team matchups or rotation schedule.
     
-    Requires exactly 4 player IDs.
-    Returns top N most balanced matchups sorted by fairness.
+    - 4 players: Returns top N balanced matchups
+    - 5 players: Returns rotation schedule (5 games, each player sits once)
+    - 6 players: Returns tournament bracket (3 games, round-robin)
     """
-    if len(request.player_ids) != 4:
+    if len(request.player_ids) < 4 or len(request.player_ids) > 6:
         raise HTTPException(
             status_code=400,
-            detail="Exactly 4 players required for 2v2 team generation"
+            detail="Requires 4-6 players for team generation"
         )
     
     try:
-        matchups = generate_balanced_teams(request.player_ids, db, request.top_n)
-        return {
-            "matchups": matchups,
-            "total": len(matchups)
-        }
+        result = generate_balanced_teams(request.player_ids, db, request.top_n)
+        
+        # Handle different return types
+        if isinstance(result, dict) and "type" in result:
+            # Rotation schedule (5 or 6 players)
+            return result
+        else:
+            # Regular matchups (4 players)
+            return {
+                "matchups": result,
+                "total": len(result)
+            }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
