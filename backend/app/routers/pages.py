@@ -449,3 +449,21 @@ async def power_index_page(request: Request, db: Session = Depends(get_db)):
             "rankings": rankings,
         }
     )
+
+
+@router.get("/awards", response_class=HTMLResponse)
+async def awards_page(request: Request, db: Session = Depends(get_db)):
+    """Weekly awards page"""
+    
+    from backend.app.awards import get_all_awards
+    
+    # Get all awards for last 7 days
+    awards = get_all_awards(db, days=7)
+    
+    return templates.TemplateResponse(
+        "awards.html",
+        {
+            "request": request,
+            "awards": awards,
+        }
+    )
