@@ -239,14 +239,39 @@ async def get_match(match_id: int, db: Session = Depends(get_db)):
         rating_changes=[]  # Will be populated by TrueSkill in #5
     )
 
+def recalculate_pair_stats(db: Session):
+    """Recalculate all pair stats from scratch based on non-deleted matches."""
+    # Delete all existing pair stats
+    db.query(PairStats).delete()
+    db.commit()
+    
+    # Get all non-deleted matches
+    matches = db.query(Match).filter(Match.is_deleted == False).order_by(Match.played_at.asc()).all()
+    
+    # Rebuild pair stats
+    for match in matches:
+        team1_won = match.team1_score > match.team2_score
+        team2_won = match.team2_score > match.team1_score
+        
+        update_pair_stats(db, match.team1_player1, match.team1_player2, team1_won, 
+                         match.team1_score, match.team2_score, match.played_at)
+        update_pair_stats(db, match.team2_player1, match.team2_player2, team2_won,
+                         match.team2_score, match.team1_score, match.played_at)
+    
+    db.commit()
+
+
 @router.delete("/{match_id}")
 async def delete_match(match_id: int, db: Session = Depends(get_db)):
     """
-    Soft-delete a match
+    Soft-delete a match and recalculate all stats
     
     Sets is_deleted=True instead of actually removing the record.
-    This preserves historical data and allows for rating recalculation.
-    All ratings are recalculated from scratch after deletion.
+    Recalculates:
+    - TrueSkill ratings for all players
+    - Pair chemistry stats
+    
+    This ensures data consistency after deletion.
     """
     match = db.query(Match).filter(Match.id == match_id).first()
     
@@ -256,10 +281,49 @@ async def delete_match(match_id: int, db: Session = Depends(get_db)):
     if match.is_deleted:
         raise HTTPException(status_code=400, detail="Match already deleted")
     
+    # Soft delete
     match.is_deleted = True
     db.commit()
     
     # Recalculate all ratings from scratch
     ranking.recalculate_all_ratings(db)
     
-    return {"success": True, "message": f"Match {match_id} soft-deleted and ratings recalculated"}
+    # Recalculate pair stats
+    recalculate_pair_stats(db)
+    
+    return {
+        "success": True, 
+        "message": f"Match {match_id} deleted. Ratings and chemistry stats recalculated.",
+        "match_id": match_id
+    }
+
+
+@router.get("/recent/last")
+async def get_last_match(db: Session = Depends(get_db)):
+    """
+    Get the most recently logged match (for undo functionality).
+    """
+    last_match = (
+        db.query(Match)
+        .filter(Match.is_deleted == False)
+        .order_by(Match.created_at.desc())
+        .first()
+    )
+    
+    if not last_match:
+        raise HTTPException(status_code=404, detail="No matches found")
+    
+    # Get player names
+    t1p1 = db.query(Player).filter(Player.id == last_match.team1_player1).first()
+    t1p2 = db.query(Player).filter(Player.id == last_match.team1_player2).first()
+    t2p1 = db.query(Player).filter(Player.id == last_match.team2_player1).first()
+    t2p2 = db.query(Player).filter(Player.id == last_match.team2_player2).first()
+    
+    return {
+        "id": last_match.id,
+        "played_at": last_match.played_at,
+        "team1": [t1p1.name, t1p2.name],
+        "team2": [t2p1.name, t2p2.name],
+        "score": f"{last_match.team1_score}-{last_match.team2_score}",
+        "logged_at": last_match.created_at
+    }

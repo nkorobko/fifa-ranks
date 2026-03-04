@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Team Generator - FIFA Ranks{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">⚖️ Balanced Team Generator</h2>
+        <p class="text-gray-600 dark:text-gray-400">Create fair 2v2 matchups based on TrueSkill ratings</p>
+    </div>
+
+    <!-- Player selection -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Select 4 Players</h3>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            {% for player in players %}
+            <button type="button" 
+                    class="player-select px-4 py-3 rounded-lg border-2 transition-all"
+                    data-player-id="{{ player.id }}"
+                    data-player-name="{{ player.name }}"
+                    onclick="togglePlayerSelection(this)">
+                {{ player.name }}
+            </button>
+            {% endfor %}
+        </div>
+
+        <div class="flex justify-between items-center">
+            <div id="selection-count" class="text-sm text-gray-600 dark:text-gray-400">
+                Selected: <span id="count">0</span>/4
+            </div>
+            <button onclick="generateTeams()" 
+                    id="generate-btn"
+                    disabled
+                    class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                Generate Teams
+            </button>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="hidden">
+        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">Suggested Matchups</h3>
+        <div id="matchups-container" class="space-y-6"></div>
+    </div>
+</div>
+
+<style>
+    .player-select {
+        @apply border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100;
+    }
+    .player-select.selected {
+        @apply border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-semibold;
+    }
+</style>
+
+<script>
+    const selectedPlayers = new Set();
+    const playerNames = new Map();
+
+    function togglePlayerSelection(button) {
+        const playerId = button.dataset.playerId;
+        const playerName = button.dataset.playerName;
+
+        if (selectedPlayers.has(playerId)) {
+            selectedPlayers.delete(playerId);
+            playerNames.delete(playerId);
+            button.classList.remove('selected');
+        } else {
+            if (selectedPlayers.size < 4) {
+                selectedPlayers.add(playerId);
+                playerNames.set(playerId, playerName);
+                button.classList.add('selected');
+            } else {
+                alert('You can only select 4 players');
+                return;
+            }
+        }
+
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('count').textContent = selectedPlayers.size;
+        document.getElementById('generate-btn').disabled = selectedPlayers.size !== 4;
+    }
+
+    async function generateTeams() {
+        const playerIds = Array.from(selectedPlayers).map(id => parseInt(id));
+
+        try {
+            const response = await fetch('/api/v1/teams/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    player_ids: playerIds,
+                    top_n: 3
+                }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                alert(`Error: ${error.detail || 'Failed to generate teams'}`);
+                return;
+            }
+
+            const data = await response.json();
+            displayMatchups(data.matchups);
+        } catch (err) {
+            console.error(err);
+            alert('Network error. Please try again.');
+        }
+    }
+
+    function displayMatchups(matchups) {
+        const container = document.getElementById('matchups-container');
+        const results = document.getElementById('results');
+
+        if (matchups.length === 0) {
+            container.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No matchups generated</p>';
+            results.classList.remove('hidden');
+            return;
+        }
+
+        container.innerHTML = matchups.map((matchup, index) => `
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transform hover:scale-105 transition-transform">
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-2xl font-bold ${index === 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'}">
+                            ${index === 0 ? '⭐' : '#' + (index + 1)}
+                        </span>
+                        <span class="px-3 py-1 rounded-full text-sm font-semibold ${
+                            matchup.fairness === 'Excellent' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
+                            matchup.fairness === 'Good' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' :
+                            matchup.fairness === 'Fair' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' :
+                            'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                        }">
+                            ${matchup.fairness}
+                        </span>
+                    </div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                        Balance: <span class="font-bold">${matchup.balance_score.toFixed(0)}/100</span>
+                    </div>
+                </div>
+
+                <!-- Teams -->
+                <div class="grid grid-cols-3 gap-4 items-center">
+                    <!-- Team 1 -->
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 dark:border-blue-400 rounded-lg p-4">
+                        <div class="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-2">Team 1</div>
+                        <div class="space-y-1">
+                            <div class="font-medium text-gray-800 dark:text-gray-100">${matchup.team1.player1_name}</div>
+                            <div class="font-medium text-gray-800 dark:text-gray-100">${matchup.team1.player2_name}</div>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                            Strength: ${matchup.team1.strength.toFixed(1)}
+                        </div>
+                    </div>
+
+                    <!-- VS + Win Probability -->
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-gray-400 dark:text-gray-600 mb-2">VS</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400">
+                            ${(matchup.predicted_win_prob * 100).toFixed(0)}% - ${((1 - matchup.predicted_win_prob) * 100).toFixed(0)}%
+                        </div>
+                    </div>
+
+                    <!-- Team 2 -->
+                    <div class="bg-red-50 dark:bg-red-900/20 border-2 border-red-500 dark:border-red-400 rounded-lg p-4">
+                        <div class="text-xs text-red-600 dark:text-red-400 font-semibold mb-2">Team 2</div>
+                        <div class="space-y-1">
+                            <div class="font-medium text-gray-800 dark:text-gray-100">${matchup.team2.player1_name}</div>
+                            <div class="font-medium text-gray-800 dark:text-gray-100">${matchup.team2.player2_name}</div>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                            Strength: ${matchup.team2.strength.toFixed(1)}
+                        </div>
+                    </div>
+                </div>
+
+                ${index === 0 ? '<div class="mt-4 text-center text-sm text-green-600 dark:text-green-400 font-semibold">🎯 Most Balanced Matchup</div>' : ''}
+            </div>
+        `).join('');
+
+        results.classList.remove('hidden');
+        results.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+{% endblock %}

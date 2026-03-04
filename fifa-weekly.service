@@ -1,0 +1,15 @@
+[Unit]
+Description=FIFA Ranks Weekly Power Index Generation
+After=network.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+WorkingDirectory=/home/ubuntu/fifa-ranks
+Environment="PATH=/home/ubuntu/fifa-ranks/fifa-env/bin:/usr/bin"
+ExecStart=/home/ubuntu/fifa-ranks/fifa-env/bin/python3 /home/ubuntu/fifa-ranks/scripts/weekly_rankings_cron.py
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -10,9 +10,14 @@
             <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">📊 Recent Matches</h2>
             <p class="text-gray-600 dark:text-gray-400">Last {{ matches|length }} matches played</p>
         </div>
-        <a href="/log-match" class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">
-            ➕ Log Match
-        </a>
+        <div class="flex gap-3">
+            <button onclick="undoLastMatch()" class="bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-700 dark:hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">
+                ↩️ Undo Last
+            </button>
+            <a href="/log-match" class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">
+                ➕ Log Match
+            </a>
+        </div>
     </div>
 
     <!-- Matches list -->
@@ -82,8 +87,12 @@
                             <span>👤 Logged by {{ match.logged_by }}</span>
                             {% endif %}
                         </div>
-                        <div class="text-xs text-gray-400 dark:text-gray-500">
-                            Match #{{ match.id }}
+                        <div class="flex items-center space-x-3">
+                            <span class="text-xs text-gray-400 dark:text-gray-500">Match #{{ match.id }}</span>
+                            <button onclick="deleteMatch({{ match.id }}, '{{ match.team1_player1_name }} & {{ match.team1_player2_name }} vs {{ match.team2_player1_name }} & {{ match.team2_player2_name }}')"
+                                    class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium text-sm">
+                                🗑️ Delete
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -108,4 +117,70 @@
     </div>
     {% endif %}
 </div>
+
+<script>
+    async function undoLastMatch() {
+        if (!confirm('Undo the most recently logged match?\n\nThis will delete it and recalculate all ratings.')) {
+            return;
+        }
+
+        try {
+            // Get last match
+            const lastResponse = await fetch('/api/v1/matches/recent/last');
+            if (!lastResponse.ok) {
+                alert('No matches to undo');
+                return;
+            }
+
+            const lastMatch = await lastResponse.json();
+            
+            // Confirm with details
+            const confirmText = `Undo this match?\n\n${lastMatch.team1.join(' & ')} vs ${lastMatch.team2.join(' & ')}\nScore: ${lastMatch.score}\n\nThis will recalculate all ratings.`;
+            if (!confirm(confirmText)) {
+                return;
+            }
+
+            // Delete it
+            const deleteResponse = await fetch(`/api/v1/matches/${lastMatch.id}`, {
+                method: 'DELETE'
+            });
+
+            if (deleteResponse.ok) {
+                alert('Match deleted successfully! Ratings recalculated.');
+                window.location.reload();
+            } else {
+                const error = await deleteResponse.json();
+                alert(`Error: ${error.detail || 'Failed to delete match'}`);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Network error. Please try again.');
+        }
+    }
+
+    async function deleteMatch(matchId, matchDescription) {
+        const confirmText = `Delete this match?\n\n${matchDescription}\n\nThis will recalculate all ratings and chemistry stats.`;
+        
+        if (!confirm(confirmText)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/v1/matches/${matchId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert('Match deleted successfully! Ratings recalculated.');
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                alert(`Error: ${error.detail || 'Failed to delete match'}`);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Network error. Please try again.');
+        }
+    }
+</script>
 {% endblock %}

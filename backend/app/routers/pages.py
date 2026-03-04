@@ -467,3 +467,19 @@ async def awards_page(request: Request, db: Session = Depends(get_db)):
             "awards": awards,
         }
     )
+
+
+@router.get("/team-generator", response_class=HTMLResponse)
+async def team_generator_page(request: Request, db: Session = Depends(get_db)):
+    """Balanced team generator page"""
+    
+    # Get all active players
+    players = db.query(Player).order_by(Player.name).all()
+    
+    return templates.TemplateResponse(
+        "team_generator.html",
+        {
+            "request": request,
+            "players": players,
+        }
+    )

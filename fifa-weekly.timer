@@ -1,0 +1,15 @@
+[Unit]
+Description=FIFA Ranks Weekly Power Index Timer
+Requires=fifa-weekly.service
+
+[Timer]
+# Run every Monday at 00:00 (midnight)
+OnCalendar=Mon *-*-* 00:00:00
+# Also run 5 minutes after boot (for testing/recovery)
+OnBootSec=5min
+# Randomize start time by up to 30 minutes to avoid load spikes
+RandomizedDelaySec=30min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

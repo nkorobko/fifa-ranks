@@ -31,7 +31,7 @@ async def health_check():
     return {"status": "ok"}
 
 # Import routers
-from backend.app.routers import matches, players, rankings, chemistry, power_index, pages
+from backend.app.routers import matches, players, rankings, chemistry, power_index, team_generator, pages
 
 # API routes
 app.include_router(matches.router, prefix="/api/v1/matches", tags=["matches"])
@@ -39,6 +39,7 @@ app.include_router(players.router, prefix="/api/v1/players", tags=["players"])
 app.include_router(rankings.router, prefix="/api/v1/rankings", tags=["rankings"])
 app.include_router(chemistry.router, prefix="/api/v1/chemistry", tags=["chemistry"])
 app.include_router(power_index.router, prefix="/api/v1/power-index", tags=["power_index"])
+app.include_router(team_generator.router, prefix="/api/v1/teams", tags=["team_generator"])
 
 # Web page routes (must come last to avoid shadowing API routes)
 app.include_router(pages.router, tags=["pages"])
