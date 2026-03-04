@@ -45,7 +45,7 @@ echo "✅ Dependencies installed"
 
 echo ""
 echo "3️⃣  Initializing database..."
-python -m backend.seed
+python init_db.py
 echo "✅ Database initialized"
 
 echo ""
