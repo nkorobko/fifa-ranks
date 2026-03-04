@@ -1,0 +1,16 @@
+[Unit]
+Description=FIFA Ranks Telegram Bot
+After=network.target fifa-api.service
+Requires=fifa-api.service
+
+[Service]
+Type=simple
+User=YOUR_USERNAME
+WorkingDirectory=/path/to/fifa-ranks
+Environment="PATH=/path/to/fifa-ranks/fifa-env/bin"
+ExecStart=/path/to/fifa-ranks/fifa-env/bin/python -m backend.bot.main
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
