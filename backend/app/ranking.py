@@ -45,12 +45,12 @@ def update_ratings(match: Match, db: Session) -> dict:
     """
     # Load current ratings for all 4 players
     team1_ratings = [
-        get_current_rating(match.team1_player1_id, db),
-        get_current_rating(match.team1_player2_id, db),
+        get_current_rating(match.team1_player1, db),
+        get_current_rating(match.team1_player2, db),
     ]
     team2_ratings = [
-        get_current_rating(match.team2_player1_id, db),
-        get_current_rating(match.team2_player2_id, db),
+        get_current_rating(match.team2_player1, db),
+        get_current_rating(match.team2_player2, db),
     ]
     
     # Determine ranks based on match scores
@@ -75,10 +75,10 @@ def update_ratings(match: Match, db: Session) -> dict:
     
     # Save new RatingHistory entries
     player_ratings = [
-        (match.team1_player1_id, new_t1_p1, ordinal_t1_p1),
-        (match.team1_player2_id, new_t1_p2, ordinal_t1_p2),
-        (match.team2_player1_id, new_t2_p1, ordinal_t2_p1),
-        (match.team2_player2_id, new_t2_p2, ordinal_t2_p2),
+        (match.team1_player1, new_t1_p1, ordinal_t1_p1),
+        (match.team1_player2, new_t1_p2, ordinal_t1_p2),
+        (match.team2_player1, new_t2_p1, ordinal_t2_p1),
+        (match.team2_player2, new_t2_p2, ordinal_t2_p2),
     ]
     
     deltas = {}
