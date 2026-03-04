@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}FIFA Ranks{% endblock %}</title>
+    <title>{% block title %}FC25 Ranks{% endblock %}</title>
     
     <!-- Tailwind CSS CDN with dark mode -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -55,8 +55,9 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <a href="/" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-                    <span class="text-3xl">⚽</span>
-                    <h1 class="text-2xl font-bold">FIFA Ranks</h1>
+                    <img src="/static/images/fc25-logo.png" alt="FC25" class="h-10" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                    <span class="text-3xl hidden">⚽</span>
+                    <h1 class="text-2xl font-bold">Ranks</h1>
                 </a>
                 <nav class="hidden md:flex space-x-6 items-center">
                     <a href="/" class="hover:text-blue-200 font-medium">Home</a>
