@@ -6,8 +6,25 @@
 <div class="max-w-5xl mx-auto">
     <!-- Page header -->
     <div class="mb-8">
-        <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">⚖️ Balanced Team Generator</h2>
-        <p class="text-gray-600 dark:text-gray-400">Create fair 2v2 matchups based on TrueSkill ratings</p>
+        <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">⚽ Team Generator</h2>
+        <p class="text-gray-600 dark:text-gray-400">Create teams for your FIFA matches</p>
+    </div>
+
+    <!-- Mode selection -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+        <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Select Mode</h3>
+        <div class="grid grid-cols-2 gap-4">
+            <button onclick="setMode('random')" id="mode-random" class="mode-btn mode-selected px-6 py-4 rounded-lg border-2 transition-all">
+                <div class="text-2xl mb-2">🎲</div>
+                <div class="font-bold mb-1">Random Teams</div>
+                <div class="text-sm opacity-80">Just for fun, no skill balancing</div>
+            </button>
+            <button onclick="setMode('balanced')" id="mode-balanced" class="mode-btn px-6 py-4 rounded-lg border-2 transition-all">
+                <div class="text-2xl mb-2">⚖️</div>
+                <div class="font-bold mb-1">Balanced Teams</div>
+                <div class="text-sm opacity-80">TrueSkill-based fair matchups</div>
+            </button>
+        </div>
     </div>
 
     <!-- Player selection -->
@@ -15,8 +32,8 @@
         <div class="flex justify-between items-center mb-4">
             <div>
                 <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">Select 4-6 Players</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    4 players = matchup suggestions • 5 players = rotation schedule • 6 players = tournament bracket
+                <p id="mode-description" class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    4 players = one game • 5 players = game 1, then sitting player plays winner • 6 players = 3 random games
                 </p>
             </div>
             <button onclick="showAddPlayerModal()" class="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-lg shadow">
@@ -44,7 +61,7 @@
                     id="generate-btn"
                     disabled
                     class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
-                Generate Schedule
+                <span id="generate-btn-text">Generate Teams</span>
             </button>
         </div>
     </div>
@@ -104,11 +121,53 @@
         background-color: rgba(30, 58, 138, 0.3) !important;
         color: #93c5fd !important;
     }
+    
+    .mode-btn {
+        border-color: #d1d5db;
+        background-color: white;
+        color: #6b7280;
+        cursor: pointer;
+    }
+    .dark .mode-btn {
+        border-color: #4b5563;
+        background-color: #1f2937;
+        color: #9ca3af;
+    }
+    .mode-btn.mode-selected {
+        border-color: #3b82f6 !important;
+        background-color: #eff6ff !important;
+        color: #1d4ed8 !important;
+    }
+    .dark .mode-btn.mode-selected {
+        border-color: #60a5fa !important;
+        background-color: rgba(30, 58, 138, 0.3) !important;
+        color: #93c5fd !important;
+    }
 </style>
 
 <script>
     const selectedPlayers = new Set();
     const playerNames = new Map();
+    let currentMode = 'random'; // 'random' or 'balanced'
+    
+    function setMode(mode) {
+        currentMode = mode;
+        
+        // Update button styles
+        document.getElementById('mode-random').classList.toggle('mode-selected', mode === 'random');
+        document.getElementById('mode-balanced').classList.toggle('mode-selected', mode === 'balanced');
+        
+        // Update description
+        const desc = document.getElementById('mode-description');
+        const btnText = document.getElementById('generate-btn-text');
+        if (mode === 'random') {
+            desc.textContent = '4 players = one game • 5 players = game 1, then sitting player plays winner • 6 players = 3 random games';
+            btnText.textContent = 'Generate Teams';
+        } else {
+            desc.textContent = '4 players = matchup suggestions • 5 players = rotation schedule • 6 players = tournament bracket';
+            btnText.textContent = 'Generate Schedule';
+        }
+    }
 
     function togglePlayerSelection(button) {
         const playerId = button.dataset.playerId;
@@ -187,37 +246,205 @@
 
     async function generateTeams() {
         const playerIds = Array.from(selectedPlayers).map(id => parseInt(id));
+        
+        if (currentMode === 'random') {
+            // Generate random teams client-side
+            generateRandomTeams(playerIds);
+        } else {
+            // Call API for balanced teams
+            try {
+                const response = await fetch('/api/v1/teams/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        player_ids: playerIds,
+                        top_n: 3
+                    }),
+                });
 
-        try {
-            const response = await fetch('/api/v1/teams/generate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    player_ids: playerIds,
-                    top_n: 3
-                }),
-            });
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert(`Error: ${error.detail || 'Failed to generate teams'}`);
+                    return;
+                }
 
-            if (!response.ok) {
-                const error = await response.json();
-                alert(`Error: ${error.detail || 'Failed to generate teams'}`);
-                return;
+                const data = await response.json();
+                
+                // Check if it's a rotation schedule or regular matchups
+                if (data.type && (data.type === 'rotation_5' || data.type === 'tournament_6')) {
+                    displayRotationSchedule(data);
+                } else {
+                    displayMatchups(data.matchups);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error. Please try again.');
             }
-
-            const data = await response.json();
-            
-            // Check if it's a rotation schedule or regular matchups
-            if (data.type && (data.type === 'rotation_5' || data.type === 'tournament_6')) {
-                displayRotationSchedule(data);
-            } else {
-                displayMatchups(data.matchups);
-            }
-        } catch (err) {
-            console.error(err);
-            alert('Network error. Please try again.');
         }
+    }
+    
+    function shuffleArray(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+    
+    function generateRandomTeams(playerIds) {
+        const shuffled = shuffleArray(playerIds);
+        const players = shuffled.map(id => ({
+            id: id,
+            name: playerNames.get(id.toString())
+        }));
+        
+        if (players.length === 4) {
+            // Simple 2v2 game
+            const matchup = {
+                team1: { players: [players[0], players[1]] },
+                team2: { players: [players[2], players[3]] }
+            };
+            displayRandomGame(matchup);
+            
+        } else if (players.length === 5) {
+            // Game 1: 4 players, 1 sits
+            const sitting = players[4];
+            const matchup = {
+                team1: { players: [players[0], players[1]] },
+                team2: { players: [players[2], players[3]] },
+                sitting: sitting
+            };
+            displayRandomGame(matchup, '5-player mode: Game 1, then sitting player + loser plays winner');
+            
+        } else if (players.length === 6) {
+            // 3 random games
+            const games = [
+                {
+                    game: 1,
+                    team1: { players: [players[0], players[1]] },
+                    team2: { players: [players[2], players[3]] }
+                },
+                {
+                    game: 2,
+                    team1: { players: [players[0], players[2]] },
+                    team2: { players: [players[1], players[3]] }
+                },
+                {
+                    game: 3,
+                    team1: { players: [players[4], players[5]] },
+                    team2: { players: [players[0], players[1]] }
+                }
+            ];
+            displayRandomGames(games);
+        }
+    }
+    
+    function displayRandomGame(matchup, subtitle = null) {
+        const container = document.getElementById('matchups-container');
+        const results = document.getElementById('results');
+        
+        let html = `
+            <div class="bg-gradient-to-r from-green-600 to-green-800 dark:from-green-800 dark:to-gray-800 rounded-lg shadow-lg p-6 mb-6 text-white">
+                <h3 class="text-2xl font-bold mb-2">🎲 Random Teams</h3>
+                ${subtitle ? `<p class="text-lg">${subtitle}</p>` : ''}
+            </div>
+        `;
+        
+        html += `
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+                <div class="grid grid-cols-3 gap-6 items-center">
+                    <!-- Team 1 -->
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 dark:border-blue-400 rounded-lg p-6">
+                        <div class="text-sm text-blue-600 dark:text-blue-400 font-semibold mb-3">Team 1</div>
+                        <div class="space-y-2">
+                            ${matchup.team1.players.map(p => `
+                                <div class="text-lg font-bold text-gray-800 dark:text-gray-100">${p.name}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- VS -->
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-gray-400 dark:text-gray-600">VS</div>
+                    </div>
+
+                    <!-- Team 2 -->
+                    <div class="bg-red-50 dark:bg-red-900/20 border-2 border-red-500 dark:border-red-400 rounded-lg p-6">
+                        <div class="text-sm text-red-600 dark:text-red-400 font-semibold mb-3">Team 2</div>
+                        <div class="space-y-2">
+                            ${matchup.team2.players.map(p => `
+                                <div class="text-lg font-bold text-gray-800 dark:text-gray-100">${p.name}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                ${matchup.sitting ? `
+                    <div class="mt-6 text-center">
+                        <span class="px-4 py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 rounded-full font-semibold">
+                            ${matchup.sitting.name} sits out Game 1
+                        </span>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        
+        container.innerHTML = html;
+        results.classList.remove('hidden');
+        results.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function displayRandomGames(games) {
+        const container = document.getElementById('matchups-container');
+        const results = document.getElementById('results');
+        
+        let html = `
+            <div class="bg-gradient-to-r from-green-600 to-green-800 dark:from-green-800 dark:to-gray-800 rounded-lg shadow-lg p-6 mb-6 text-white">
+                <h3 class="text-2xl font-bold mb-2">🎲 Random 6-Player Schedule</h3>
+                <p class="text-lg">3 random games</p>
+            </div>
+        `;
+        
+        games.forEach(game => {
+            html += `
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-4">
+                    <h4 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Game ${game.game}</h4>
+                    <div class="grid grid-cols-3 gap-4 items-center">
+                        <!-- Team 1 -->
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 dark:border-blue-400 rounded-lg p-4">
+                            <div class="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-2">Team 1</div>
+                            <div class="space-y-1">
+                                ${game.team1.players.map(p => `
+                                    <div class="font-medium text-gray-800 dark:text-gray-100">${p.name}</div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- VS -->
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-gray-400 dark:text-gray-600">VS</div>
+                        </div>
+
+                        <!-- Team 2 -->
+                        <div class="bg-red-50 dark:bg-red-900/20 border-2 border-red-500 dark:border-red-400 rounded-lg p-4">
+                            <div class="text-xs text-red-600 dark:text-red-400 font-semibold mb-2">Team 2</div>
+                            <div class="space-y-1">
+                                ${game.team2.players.map(p => `
+                                    <div class="font-medium text-gray-800 dark:text-gray-100">${p.name}</div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        results.classList.remove('hidden');
+        results.scrollIntoView({ behavior: 'smooth' });
     }
 
     function displayRotationSchedule(schedule) {
