@@ -126,3 +126,17 @@ class PartnerSuggestion(BaseModel):
     goal_difference: int
     chemistry_score: float
     recommendation: str
+
+# Power Index schemas
+class PowerIndexRanking(BaseModel):
+    rank: int
+    player_id: int
+    player_name: str
+    power_index: float
+    skill_score: float
+    form_score: float
+    impact_score: float
+    matches_played: int
+    wins: int
+    losses: int
+    draws: int

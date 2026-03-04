@@ -431,3 +431,21 @@ async def chemistry_page(request: Request, db: Session = Depends(get_db)):
             "worst_pairs": worst_pairs,
         }
     )
+
+
+@router.get("/power-index", response_class=HTMLResponse)
+async def power_index_page(request: Request, db: Session = Depends(get_db)):
+    """Weekly Power Index rankings page"""
+    
+    from backend.app.power_index import generate_weekly_rankings
+    
+    # Generate live rankings
+    rankings = generate_weekly_rankings(db)
+    
+    return templates.TemplateResponse(
+        "power_index.html",
+        {
+            "request": request,
+            "rankings": rankings,
+        }
+    )
