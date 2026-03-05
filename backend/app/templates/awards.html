@@ -6,7 +6,10 @@
 <div class="max-w-5xl mx-auto">
     <!-- Page header -->
     <div class="mb-8 text-center">
-        <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">🎖️ Weekly Awards</h2>
+        <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2 flex items-center justify-center gap-3">
+            <i data-lucide="award" class="w-10 h-10"></i>
+            Weekly Awards
+        </h2>
         <p class="text-gray-600 dark:text-gray-400">Celebrating the best performances of the last 7 days</p>
     </div>
 
@@ -41,7 +44,9 @@
     {% else %}
     <!-- No awards yet -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center">
-        <div class="text-6xl mb-4">🏆</div>
+        <div class="flex justify-center mb-4">
+            <i data-lucide="trophy" class="w-16 h-16 text-gray-400"></i>
+        </div>
         <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">No Awards Yet</h3>
         <p class="text-gray-600 dark:text-gray-400 mb-6">
             Play more matches this week to unlock awards!
@@ -54,46 +59,67 @@
 
     <!-- Award explanations -->
     <div class="mt-12 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">🎯 Award Criteria</h3>
+        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center flex items-center justify-center gap-2">
+            <i data-lucide="target" class="w-7 h-7"></i>
+            Award Criteria
+        </h3>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="border-l-4 border-yellow-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1">🏆 MVP</h4>
+                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
+                    <i data-lucide="trophy" class="w-4 h-4"></i>
+                    MVP
+                </h4>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     Highest Power Index this week (min 3 matches)
                 </p>
             </div>
 
             <div class="border-l-4 border-red-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1">🔥 On Fire</h4>
+                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
+                    <i data-lucide="flame" class="w-4 h-4"></i>
+                    On Fire
+                </h4>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     Longest active win streak (min 3 wins)
                 </p>
             </div>
 
             <div class="border-l-4 border-purple-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1">💪 Clutch Player</h4>
+                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                    Clutch Player
+                </h4>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     Most wins by 1-goal margin (min 2 clutch wins)
                 </p>
             </div>
 
             <div class="border-l-4 border-green-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1">⚽ Goal Machine</h4>
+                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
+                    <i data-lucide="circle-dot" class="w-4 h-4"></i>
+                    Goal Machine
+                </h4>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     Most goals scored in last 14 days (min 3 matches)
                 </p>
             </div>
 
             <div class="border-l-4 border-blue-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1">🛡️ The Wall</h4>
+                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
+                    <i data-lucide="shield" class="w-4 h-4"></i>
+                    The Wall
+                </h4>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     Fewest goals conceded per match (min 3 matches)
                 </p>
             </div>
 
             <div class="border-l-4 border-gray-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1">👑 Comeback King</h4>
+                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
+                    <i data-lucide="crown" class="w-4 h-4"></i>
+                    Comeback King
+                </h4>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     Most wins immediately after a loss (min 2 comebacks)
                 </p>

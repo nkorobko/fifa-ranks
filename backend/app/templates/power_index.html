@@ -6,24 +6,39 @@
 <div class="max-w-6xl mx-auto">
     <!-- Page header -->
     <div class="mb-8">
-        <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">⚡ Weekly Power Index</h2>
+        <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2 flex items-center gap-2">
+            <i data-lucide="zap" class="w-8 h-8"></i>
+            Weekly Power Index
+        </h2>
         <p class="text-gray-600 dark:text-gray-400">Composite rankings based on skill, form, and impact</p>
     </div>
 
     <!-- Explanation card -->
     <div class="bg-gradient-to-r from-purple-600 to-purple-800 dark:from-purple-800 dark:to-gray-800 rounded-lg shadow-lg p-6 mb-8 text-white">
-        <h3 class="text-xl font-bold mb-3">📊 How Power Index Works</h3>
+        <h3 class="text-xl font-bold mb-3 flex items-center gap-2">
+            <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+            How Power Index Works
+        </h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
-                <div class="font-bold mb-1">🎯 Skill Score (40%)</div>
+                <div class="font-bold mb-1 flex items-center gap-1">
+                    <i data-lucide="target" class="w-4 h-4"></i>
+                    Skill Score (40%)
+                </div>
                 <div class="text-white/80">Your TrueSkill rating normalized to 0-100</div>
             </div>
             <div>
-                <div class="font-bold mb-1">🔥 Form Score (35%)</div>
+                <div class="font-bold mb-1 flex items-center gap-1">
+                    <i data-lucide="flame" class="w-4 h-4"></i>
+                    Form Score (35%)
+                </div>
                 <div class="text-white/80">Recent match performance (last 14 days, weighted)</div>
             </div>
             <div>
-                <div class="font-bold mb-1">💥 Impact Score (25%)</div>
+                <div class="font-bold mb-1 flex items-center gap-1">
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                    Impact Score (25%)
+                </div>
                 <div class="text-white/80">Goals scored and decisive wins</div>
             </div>
         </div>
@@ -49,8 +64,9 @@
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                         <!-- Rank -->
                         <td class="px-4 py-4 whitespace-nowrap">
-                            <span class="text-lg font-bold {% if loop.index == 1 %}rank-1{% elif loop.index == 2 %}rank-2{% elif loop.index == 3 %}rank-3{% else %}text-gray-700 dark:text-gray-300{% endif %}">
-                                {% if loop.index == 1 %}🥇 1{% elif loop.index == 2 %}🥈 2{% elif loop.index == 3 %}🥉 3{% else %}{{ loop.index }}{% endif %}
+                            <span class="text-lg font-bold {% if loop.index == 1 %}rank-1{% elif loop.index == 2 %}rank-2{% elif loop.index == 3 %}rank-3{% else %}text-gray-700 dark:text-gray-300{% endif %} flex items-center gap-1">
+                                {% if loop.index <= 3 %}<i data-lucide="medal" class="w-5 h-5"></i>{% endif %}
+                                {{ loop.index }}
                             </span>
                         </td>
 
@@ -130,7 +146,10 @@
     <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Skill -->
         <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <h4 class="font-bold text-blue-900 dark:text-blue-300 mb-2">🎯 Skill Score</h4>
+            <h4 class="font-bold text-blue-900 dark:text-blue-300 mb-2 flex items-center gap-2">
+                <i data-lucide="target" class="w-5 h-5"></i>
+                Skill Score
+            </h4>
             <p class="text-sm text-blue-800 dark:text-blue-200">
                 Based on your TrueSkill rating. This is your proven ability over time. Contributes 40% to Power Index.
             </p>
@@ -138,7 +157,10 @@
 
         <!-- Form -->
         <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-            <h4 class="font-bold text-green-900 dark:text-green-300 mb-2">🔥 Form Score</h4>
+            <h4 class="font-bold text-green-900 dark:text-green-300 mb-2 flex items-center gap-2">
+                <i data-lucide="flame" class="w-5 h-5"></i>
+                Form Score
+            </h4>
             <p class="text-sm text-green-800 dark:text-green-200">
                 Recent performance (last 14 days). Recent matches weighted higher. Contributes 35% to Power Index.
             </p>
@@ -146,7 +168,10 @@
 
         <!-- Impact -->
         <div class="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
-            <h4 class="font-bold text-orange-900 dark:text-orange-300 mb-2">💥 Impact Score</h4>
+            <h4 class="font-bold text-orange-900 dark:text-orange-300 mb-2 flex items-center gap-2">
+                <i data-lucide="zap" class="w-5 h-5"></i>
+                Impact Score
+            </h4>
             <p class="text-sm text-orange-800 dark:text-orange-200">
                 Goals scored and decisive wins. Rewards offensive play and clutch performances. Contributes 25% to Power Index.
             </p>
@@ -155,7 +180,10 @@
 
     <!-- Note -->
     <div class="mt-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-        <h4 class="font-bold text-yellow-900 dark:text-yellow-300 mb-2">💡 Note</h4>
+        <h4 class="font-bold text-yellow-900 dark:text-yellow-300 mb-2 flex items-center gap-2">
+            <i data-lucide="lightbulb" class="w-5 h-5"></i>
+            Note
+        </h4>
         <p class="text-sm text-yellow-800 dark:text-yellow-200">
             Power Index updates in real-time based on recent performance. It combines long-term skill with short-term form and impact to give a complete picture of who's on top right now.
         </p>

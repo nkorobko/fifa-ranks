@@ -20,6 +20,9 @@
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
     <!-- Custom Color System -->
     <link rel="stylesheet" href="/static/css/colors.css">
     <link rel="stylesheet" href="/static/css/typography.css">
@@ -64,7 +67,7 @@
             <div class="flex items-center justify-between">
                 <a href="/" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
                     <img src="/static/images/fc25-logo.png" alt="FC25" class="h-10" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
-                    <span class="text-3xl hidden">⚽</span>
+                    <i data-lucide="circle-dot" class="w-8 h-8 hidden"></i>
                     <h1 class="text-2xl font-bold">Ranks</h1>
                 </a>
                 <nav class="hidden md:flex space-x-6 items-center">
@@ -102,8 +105,8 @@
                 <a href="/matches" class="block hover:text-blue-200 font-medium">Matches</a>
                 <a href="/chemistry" class="block hover:text-blue-200 font-medium">Chemistry</a>
                 <button onclick="toggleDarkMode()" class="flex items-center space-x-2 hover:text-blue-200 font-medium w-full text-left">
-                    <span class="dark:hidden">🌙 Dark Mode</span>
-                    <span class="hidden dark:inline">☀️ Light Mode</span>
+                    <span class="dark:hidden flex items-center gap-2"><i data-lucide="moon" class="w-4 h-4"></i> Dark Mode</span>
+                    <span class="hidden dark:flex items-center gap-2"><i data-lucide="sun" class="w-4 h-4"></i> Light Mode</span>
                 </button>
             </nav>
         </div>
@@ -144,6 +147,16 @@
                 localStorage.theme = 'dark';
             }
         }
+        
+        // Initialize Lucide icons on page load and after HTMX swaps
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+        
+        // Re-initialize icons after HTMX content swap
+        document.body.addEventListener('htmx:afterSwap', () => {
+            lucide.createIcons();
+        });
     </script>
 
     {% block extra_scripts %}{% endblock %}

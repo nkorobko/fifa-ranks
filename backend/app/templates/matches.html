@@ -7,15 +7,17 @@
     <!-- Page header -->
     <div class="mb-8 flex justify-between items-center">
         <div>
-            <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">📊 Recent Matches</h2>
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2"><i data-lucide="bar-chart-3" class="w-8 h-8 inline"></i> Recent Matches</h2>
             <p class="text-gray-600 dark:text-gray-400">Last {{ matches|length }} matches played</p>
         </div>
         <div class="flex gap-3">
-            <button onclick="undoLastMatch()" class="bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-700 dark:hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">
-                ↩️ Undo Last
+            <button onclick="undoLastMatch()" class="bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-700 dark:hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+                <i data-lucide="undo-2" class="w-4 h-4"></i>
+                Undo Last
             </button>
-            <a href="/log-match" class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">
-                ➕ Log Match
+            <a href="/log-match" class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Log Match
             </a>
         </div>
     </div>
@@ -100,7 +102,9 @@
         </div>
         {% else %}
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center">
-            <div class="text-6xl mb-4">⚽</div>
+            <div class="flex justify-center mb-4">
+                <i data-lucide="circle-dot" class="w-16 h-16 text-gray-400"></i>
+            </div>
             <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">No matches yet</h3>
             <p class="text-gray-600 dark:text-gray-400 mb-6">Start logging matches to see them here!</p>
             <a href="/log-match" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg">

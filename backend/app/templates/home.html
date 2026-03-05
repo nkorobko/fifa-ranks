@@ -6,18 +6,21 @@
 <div class="max-w-6xl mx-auto">
     <!-- Hero section -->
     <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-            ⚽ Welcome to FC25 Ranks
+        <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center justify-center gap-3">
+            <i data-lucide="circle-dot" class="w-10 h-10"></i>
+            Welcome to FC25 Ranks
         </h2>
         <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">
             Track your office FIFA 2v2 matches with TrueSkill rankings
         </p>
         <div class="flex justify-center space-x-4">
-            <a href="/rankings" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">
-                View Rankings 🏆
+            <a href="/rankings" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+                <i data-lucide="trophy" class="w-5 h-5"></i>
+                View Rankings
             </a>
-            <a href="/matches" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">
-                Recent Matches 📊
+            <a href="/matches" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                Recent Matches
             </a>
         </div>
     </div>
@@ -45,12 +48,15 @@
 
     <!-- Current top 3 -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
-        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">🏆 Current Top 3</h3>
+        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center flex items-center justify-center gap-2">
+            <i data-lucide="trophy" class="w-7 h-7"></i>
+            Current Top 3
+        </h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             {% for player in top_players[:3] %}
             <div class="text-center p-6 rounded-lg {% if loop.index == 1 %}bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 dark:border-yellow-600{% elif loop.index == 2 %}bg-gray-50 dark:bg-gray-700/50 border-2 border-gray-400 dark:border-gray-600{% else %}bg-orange-50 dark:bg-orange-900/20 border-2 border-orange-400 dark:border-orange-600{% endif %}">
-                <div class="text-5xl mb-3">
-                    {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% else %}🥉{% endif %}
+                <div class="flex justify-center mb-3">
+                    <i data-lucide="medal" class="w-14 h-14 {% if loop.index == 1 %}text-yellow-500 dark:text-yellow-400{% elif loop.index == 2 %}text-gray-500 dark:text-gray-400{% else %}text-orange-600 dark:text-orange-500{% endif %}"></i>
                 </div>
                 <div class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">{{ player.name }}</div>
                 <div class="text-3xl font-bold {% if loop.index == 1 %}text-yellow-600 dark:text-yellow-400{% elif loop.index == 2 %}text-gray-600 dark:text-gray-400{% else %}text-orange-600 dark:text-orange-400{% endif %} mb-2">
@@ -71,7 +77,10 @@
 
     <!-- How to use -->
     <div class="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-800 dark:to-gray-800 rounded-lg shadow-lg p-8 text-white">
-        <h3 class="text-2xl font-bold mb-4">📱 Log Matches via Telegram</h3>
+        <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="smartphone" class="w-7 h-7"></i>
+            Log Matches via Telegram
+        </h3>
         <p class="text-lg mb-4">
             Use our Telegram bot to quickly log matches from your phone!
         </p>
