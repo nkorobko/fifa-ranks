@@ -101,15 +101,29 @@
             </div>
         </div>
         {% else %}
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center">
-            <div class="flex justify-center mb-4">
-                <i data-lucide="circle-dot" class="w-16 h-16 text-gray-400"></i>
+        <div class="card p-16 text-center max-w-2xl mx-auto">
+            <div class="flex justify-center mb-8">
+                <div class="relative">
+                    <i data-lucide="calendar" class="w-24 h-24 text-gray-300 dark:text-gray-600"></i>
+                    <div class="absolute -bottom-2 -right-2 bg-gradient-primary rounded-full p-3">
+                        <i data-lucide="circle-dot" class="w-6 h-6 text-white"></i>
+                    </div>
+                </div>
             </div>
-            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">No matches yet</h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-6">Start logging matches to see them here!</p>
-            <a href="/log-match" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg">
-                Log Your First Match
-            </a>
+            <h3 class="text-heading mb-4">No Matches Recorded</h3>
+            <p class="text-body text-secondary mb-8 max-w-md mx-auto">
+                Start tracking your FIFA matches! Every game counts toward your TrueSkill ranking and weekly awards.
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="/log-match" class="btn-primary inline-flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    Log Your First Match
+                </a>
+                <a href="https://t.me/FCRanksBot" class="btn-secondary inline-flex items-center gap-2">
+                    <i data-lucide="smartphone" class="w-5 h-5"></i>
+                    Use Telegram Bot
+                </a>
+            </div>
         </div>
         {% endfor %}
     </div>

@@ -43,17 +43,26 @@
     </div>
     {% else %}
     <!-- No awards yet -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center">
-        <div class="flex justify-center mb-4">
-            <i data-lucide="trophy" class="w-16 h-16 text-gray-400"></i>
+    <div class="card p-16 text-center max-w-2xl mx-auto">
+        <div class="flex justify-center mb-8">
+            <div class="relative">
+                <i data-lucide="trophy" class="w-24 h-24 text-gray-300 dark:text-gray-600 animate-pulse"></i>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i data-lucide="lock" class="w-10 h-10 text-gray-400 dark:text-gray-500"></i>
+                </div>
+            </div>
         </div>
-        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">No Awards Yet</h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">
-            Play more matches this week to unlock awards!
+        <h3 class="text-heading mb-4">Your First Award Awaits</h3>
+        <p class="text-body text-secondary mb-8 max-w-md mx-auto">
+            Play 3 matches this week to unlock MVP, win streaks for On Fire, or score big for Goal Machine.
         </p>
-        <a href="/log-match" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg">
-            Log a Match
+        <a href="/log-match" class="btn-primary inline-flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+            Log Your First Match
         </a>
+        <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <p class="text-caption">💡 Tip: Awards reset every Monday. Get playing!</p>
+        </div>
     </div>
     {% endif %}
 
