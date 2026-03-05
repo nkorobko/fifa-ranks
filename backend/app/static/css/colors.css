@@ -1,0 +1,165 @@
+/* FC25 Ranks - Color System */
+
+:root {
+  /* Brand Gradient - EA FC inspired purple-to-pink */
+  --gradient-primary: linear-gradient(135deg, #a855f7 0%, #d946ef 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #9333ea 0%, #c026d3 100%);
+  
+  /* Accent colors extracted from gradient */
+  --accent-primary: #a855f7;
+  --accent-primary-hover: #9333ea;
+  --accent-secondary: #d946ef;
+  
+  /* Surface layers - depth through elevation */
+  --bg-base: #0a0a0f;           /* Deepest background */
+  --bg-raised: #13131a;         /* Cards, containers */
+  --bg-elevated: #1c1c26;       /* Elevated cards, modals */
+  --bg-overlay: #25252f;        /* Highest elevation */
+  
+  /* Semantic colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  
+  /* Text hierarchy */
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.60);
+  --text-tertiary: rgba(255, 255, 255, 0.40);
+  
+  /* Borders & dividers */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-elevated: rgba(255, 255, 255, 0.12);
+  
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  
+  /* Shadows with accent tint */
+  --shadow-sm: 0 1px 2px 0 rgba(168, 85, 247, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(168, 85, 247, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(168, 85, 247, 0.15);
+  --shadow-xl: 0 20px 25px -5px rgba(168, 85, 247, 0.2);
+}
+
+/* Dark mode overrides (if needed) */
+.dark {
+  /* Same values - we're already dark by default */
+}
+
+/* Utility classes */
+.bg-base { background-color: var(--bg-base); }
+.bg-raised { background-color: var(--bg-raised); }
+.bg-elevated { background-color: var(--bg-elevated); }
+.bg-overlay { background-color: var(--bg-overlay); }
+
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+
+.border-subtle { border-color: var(--border-subtle); }
+.border-elevated { border-color: var(--border-elevated); }
+
+.gradient-primary {
+  background: var(--gradient-primary);
+  color: white;
+}
+
+.gradient-border {
+  position: relative;
+  background: transparent;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: var(--gradient-primary);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Button styles with consistent accent */
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  background: var(--gradient-primary-hover);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--accent-primary);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  border: 2px solid var(--accent-primary);
+  cursor: pointer;
+  transition: all 150ms ease-out;
+}
+
+.btn-secondary:hover {
+  background: rgba(168, 85, 247, 0.1);
+  border-color: var(--accent-primary-hover);
+  color: var(--accent-primary-hover);
+}
+
+/* Card elevation with glassmorphism */
+.card-raised {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-elevated {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-elevated);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-md);
+}
+
+.card-glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Accent highlights */
+.accent-glow {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.accent-border-bottom {
+  border-bottom: 2px solid var(--accent-primary);
+}

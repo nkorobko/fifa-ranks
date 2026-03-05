@@ -20,6 +20,9 @@
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     
+    <!-- Custom Color System -->
+    <link rel="stylesheet" href="/static/css/colors.css">
+    
     <!-- Dark mode initialization (before page renders) -->
     <script>
         // Check localStorage or system preference
@@ -53,9 +56,9 @@
     
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+<body class="bg-base min-h-screen text-primary">
     <!-- Header -->
-    <header class="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-800 dark:to-gray-900 text-white shadow-lg">
+    <header class="gradient-primary text-white shadow-xl" style="box-shadow: 0 4px 6px -1px rgba(168, 85, 247, 0.2);">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <a href="/" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
