@@ -1,6 +1,13 @@
 /* FC Ranks - Color System & Design Tokens */
 
 :root {
+    /* Border Radius Scale */
+    --radius-sm: 0.5rem;    /* 8px - badges, pills, small chips */
+    --radius-md: 0.75rem;   /* 12px - buttons, inputs, medium chips */
+    --radius-lg: 1rem;      /* 16px - cards, large containers */
+    --radius-xl: 1.5rem;    /* 24px - hero sections, modals */
+    --radius-full: 9999px;  /* Full rounded - avatars, pills */
+    
     /* Brand Gradient Accent */
     --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -107,7 +114,7 @@
     color: white;
     font-weight: 600;
     padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-accent);
     transition: all 0.2s ease;
 }
@@ -130,7 +137,7 @@
     color: var(--text-primary);
     font-weight: 600;
     padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-md);
     transition: all 0.2s ease;
 }
 
@@ -143,7 +150,7 @@
 .card {
     background: var(--surface-raised);
     border: 1px solid var(--border-subtle);
-    border-radius: 1rem;
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md), 0 1px 0 0 rgba(255, 255, 255, 0.05) inset;
     transition: all 0.3s ease;
     position: relative;
@@ -157,7 +164,7 @@
     right: 0;
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    border-radius: 1rem 1rem 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 .card:hover {
@@ -169,13 +176,20 @@
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 1rem;
+    border-radius: var(--radius-lg);
 }
 
 .dark .card-glass {
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+/* Utility Classes */
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-full { border-radius: var(--radius-full); }
 
 /* Accent Border Glow */
 .border-glow {
