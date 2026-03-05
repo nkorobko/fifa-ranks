@@ -1,0 +1,210 @@
+/* FC Ranks - Color System & Design Tokens */
+
+:root {
+    /* Brand Gradient Accent */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-success: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    
+    /* Accent Colors */
+    --accent-primary: #667eea;
+    --accent-primary-light: #818cf8;
+    --accent-primary-dark: #4f46e5;
+    
+    /* Surface Layers (Light Mode) */
+    --surface-base: #f8fafc;
+    --surface-raised: #ffffff;
+    --surface-elevated: #ffffff;
+    --surface-overlay: #ffffff;
+    
+    /* Text Colors (Light Mode) */
+    --text-primary: rgba(15, 23, 42, 0.95);
+    --text-secondary: rgba(15, 23, 42, 0.65);
+    --text-tertiary: rgba(15, 23, 42, 0.45);
+    
+    /* Border & Shadow */
+    --border-subtle: rgba(148, 163, 184, 0.15);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-accent: 0 4px 14px 0 rgba(102, 126, 234, 0.25);
+}
+
+.dark {
+    /* Surface Layers (Dark Mode) */
+    --surface-base: #0f172a;
+    --surface-raised: #1e293b;
+    --surface-elevated: #334155;
+    --surface-overlay: #475569;
+    
+    /* Text Colors (Dark Mode) */
+    --text-primary: rgba(248, 250, 252, 0.95);
+    --text-secondary: rgba(248, 250, 252, 0.65);
+    --text-tertiary: rgba(248, 250, 252, 0.45);
+    
+    /* Border & Shadow */
+    --border-subtle: rgba(248, 250, 252, 0.08);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+    --shadow-accent: 0 4px 14px 0 rgba(102, 126, 234, 0.4);
+}
+
+/* Surface Classes */
+.bg-base {
+    background-color: var(--surface-base);
+}
+
+.bg-raised {
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+}
+
+.bg-elevated {
+    background-color: var(--surface-elevated);
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-md);
+}
+
+.bg-overlay {
+    background-color: var(--surface-overlay);
+    backdrop-filter: blur(12px);
+}
+
+/* Text Classes */
+.text-primary {
+    color: var(--text-primary);
+}
+
+.text-secondary {
+    color: var(--text-secondary);
+}
+
+.text-tertiary {
+    color: var(--text-tertiary);
+}
+
+/* Gradient Classes */
+.gradient-primary {
+    background: var(--gradient-primary);
+}
+
+.gradient-secondary {
+    background: var(--gradient-secondary);
+}
+
+.gradient-text-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Button Styles */
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-accent);
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 2px solid transparent;
+    background-image: var(--gradient-primary), var(--surface-raised);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    color: var(--text-primary);
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background-image: var(--gradient-primary);
+    color: white;
+}
+
+/* Card Styles with Glassmorphism */
+.card {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card-glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+}
+
+.dark .card-glass {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Accent Border Glow */
+.border-glow {
+    border: 2px solid transparent;
+    background: linear-gradient(var(--surface-raised), var(--surface-raised)) padding-box,
+                var(--gradient-primary) border-box;
+}
+
+.border-glow-hover:hover {
+    border: 2px solid transparent;
+    background: linear-gradient(var(--surface-raised), var(--surface-raised)) padding-box,
+                var(--gradient-primary) border-box;
+    box-shadow: var(--shadow-accent);
+}
+
+/* Progress Bar with Gradient */
+.progress-bar {
+    background: var(--surface-base);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background: var(--gradient-primary);
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+/* Subtle Background Pattern */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.03;
+    background-image: 
+        linear-gradient(90deg, var(--text-primary) 1px, transparent 1px),
+        linear-gradient(180deg, var(--text-primary) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+}
