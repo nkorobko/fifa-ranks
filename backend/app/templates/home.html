@@ -28,26 +28,26 @@
     <!-- Stats grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
         <!-- Total matches -->
-        <div class="card text-center p-8 animate-fade-in-up delay-1">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 text-center p-8 animate-fade-in-up delay-1 hover:shadow-xl transition-shadow">
             <div class="text-5xl font-extrabold text-blue-600 dark:text-blue-400 mb-3 number-display">{{ stats.total_matches }}</div>
             <div class="text-caption uppercase tracking-wider">Total Matches</div>
         </div>
         
         <!-- Active players -->
-        <div class="card text-center p-8 animate-fade-in-up delay-2">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 text-center p-8 animate-fade-in-up delay-2 hover:shadow-xl transition-shadow">
             <div class="text-5xl font-extrabold text-green-600 dark:text-green-400 mb-3 number-display">{{ stats.active_players }}</div>
             <div class="text-caption uppercase tracking-wider">Active Players</div>
         </div>
         
         <!-- Matches today -->
-        <div class="card text-center p-8 animate-fade-in-up delay-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 text-center p-8 animate-fade-in-up delay-3 hover:shadow-xl transition-shadow">
             <div class="text-5xl font-extrabold text-purple-600 dark:text-purple-400 mb-3 number-display">{{ stats.matches_today }}</div>
             <div class="text-caption uppercase tracking-wider">Matches Today</div>
         </div>
     </div>
 
     <!-- Current top 3 -->
-    <div class="card p-10 mb-16 animate-fade-in-up delay-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-10 mb-16 animate-fade-in-up delay-4">
         <h3 class="text-title text-center flex items-center justify-center gap-3 mb-10">
             <i data-lucide="trophy" class="w-8 h-8"></i>
             Current Top 3
