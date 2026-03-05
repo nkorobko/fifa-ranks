@@ -67,71 +67,101 @@
     {% endif %}
 
     <!-- Award explanations -->
-    <div class="mt-12 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center flex items-center justify-center gap-2">
-            <i data-lucide="target" class="w-7 h-7"></i>
-            Award Criteria
+    <div class="mt-16">
+        <h3 class="text-title text-center flex items-center justify-center gap-3 mb-10">
+            <i data-lucide="info" class="w-8 h-8"></i>
+            How to Win Awards
         </h3>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="border-l-4 border-yellow-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
-                    <i data-lucide="trophy" class="w-4 h-4"></i>
-                    MVP
-                </h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Highest Power Index this week (min 3 matches)
-                </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- MVP -->
+            <div class="card p-6 hover:scale-105 transition-all bg-gradient-to-br from-yellow-50 to-white dark:from-yellow-900/10 dark:to-gray-800 border-t-4 border-yellow-500">
+                <div class="flex items-start gap-4">
+                    <div class="bg-yellow-500 rounded-xl p-3 flex-shrink-0">
+                        <i data-lucide="trophy" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-heading text-lg mb-2">MVP</h4>
+                        <p class="text-caption leading-relaxed">
+                            Highest Power Index this week (min 3 matches)
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div class="border-l-4 border-red-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
-                    <i data-lucide="flame" class="w-4 h-4"></i>
-                    On Fire
-                </h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Longest active win streak (min 3 wins)
-                </p>
+            <!-- On Fire -->
+            <div class="card p-6 hover:scale-105 transition-all bg-gradient-to-br from-red-50 to-white dark:from-red-900/10 dark:to-gray-800 border-t-4 border-red-500">
+                <div class="flex items-start gap-4">
+                    <div class="bg-red-500 rounded-xl p-3 flex-shrink-0">
+                        <i data-lucide="flame" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-heading text-lg mb-2">On Fire</h4>
+                        <p class="text-caption leading-relaxed">
+                            Longest active win streak (min 3 wins)
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div class="border-l-4 border-purple-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
-                    <i data-lucide="zap" class="w-4 h-4"></i>
-                    Clutch Player
-                </h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Most wins by 1-goal margin (min 2 clutch wins)
-                </p>
+            <!-- Clutch Player -->
+            <div class="card p-6 hover:scale-105 transition-all bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/10 dark:to-gray-800 border-t-4 border-purple-500">
+                <div class="flex items-start gap-4">
+                    <div class="bg-purple-500 rounded-xl p-3 flex-shrink-0">
+                        <i data-lucide="zap" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-heading text-lg mb-2">Clutch Player</h4>
+                        <p class="text-caption leading-relaxed">
+                            Most wins by 1-goal margin (min 2 clutch wins)
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div class="border-l-4 border-green-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
-                    <i data-lucide="circle-dot" class="w-4 h-4"></i>
-                    Goal Machine
-                </h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Most goals scored in last 14 days (min 3 matches)
-                </p>
+            <!-- Goal Machine -->
+            <div class="card p-6 hover:scale-105 transition-all bg-gradient-to-br from-green-50 to-white dark:from-green-900/10 dark:to-gray-800 border-t-4 border-green-500">
+                <div class="flex items-start gap-4">
+                    <div class="bg-green-500 rounded-xl p-3 flex-shrink-0">
+                        <i data-lucide="circle-dot" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-heading text-lg mb-2">Goal Machine</h4>
+                        <p class="text-caption leading-relaxed">
+                            Most goals scored in last 14 days (min 3 matches)
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div class="border-l-4 border-blue-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
-                    <i data-lucide="shield" class="w-4 h-4"></i>
-                    The Wall
-                </h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Fewest goals conceded per match (min 3 matches)
-                </p>
+            <!-- The Wall -->
+            <div class="card p-6 hover:scale-105 transition-all bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/10 dark:to-gray-800 border-t-4 border-blue-500">
+                <div class="flex items-start gap-4">
+                    <div class="bg-blue-500 rounded-xl p-3 flex-shrink-0">
+                        <i data-lucide="shield" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-heading text-lg mb-2">The Wall</h4>
+                        <p class="text-caption leading-relaxed">
+                            Fewest goals conceded per match (min 3 matches)
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div class="border-l-4 border-gray-500 pl-4">
-                <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
-                    <i data-lucide="crown" class="w-4 h-4"></i>
-                    Comeback King
-                </h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Most wins immediately after a loss (min 2 comebacks)
-                </p>
+            <!-- Comeback King -->
+            <div class="card p-6 hover:scale-105 transition-all bg-gradient-to-br from-gray-50 to-white dark:from-gray-900/10 dark:to-gray-800 border-t-4 border-gray-500">
+                <div class="flex items-start gap-4">
+                    <div class="bg-gray-500 rounded-xl p-3 flex-shrink-0">
+                        <i data-lucide="crown" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-heading text-lg mb-2">Comeback King</h4>
+                        <p class="text-caption leading-relaxed">
+                            Most wins immediately after a loss (min 2 comebacks)
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
