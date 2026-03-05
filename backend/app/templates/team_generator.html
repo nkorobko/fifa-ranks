@@ -44,17 +44,42 @@
             </button>
         </div>
         
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
             {% for player in players %}
             <button type="button" 
-                    class="player-select px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:border-blue-400 dark:hover:border-blue-500 transition-all cursor-pointer"
+                    class="player-chip player-select flex items-center gap-3 px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-raised hover:scale-102 transition-all cursor-pointer"
                     data-player-id="{{ player.id }}"
                     data-player-name="{{ player.name }}"
                     onclick="togglePlayerSelection(this)">
-                {{ player.name }}
+                <div class="player-avatar w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" 
+                     style="background-color: var(--player-color-{{ loop.index }});">
+                </div>
+                <div class="flex-1 text-left">
+                    <div class="font-semibold">{{ player.name }}</div>
+                    <div class="text-xs text-secondary">Rank #{{ loop.index }}</div>
+                </div>
             </button>
+            <style>
+                :root {
+                    --player-color-{{ loop.index }}: {{ ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#ec4899', '#14b8a6', '#84cc16', '#6366f1', '#a855f7'][loop.index0 % 13] }};
+                }
+            </style>
             {% endfor %}
         </div>
+        
+        <script>
+            // Initialize player avatars with initials
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('.player-chip').forEach(chip => {
+                    const name = chip.dataset.playerName;
+                    const avatar = chip.querySelector('.player-avatar');
+                    avatar.textContent = getPlayerInitials(name);
+                    
+                    const color = getPlayerColor(name);
+                    avatar.style.backgroundColor = document.documentElement.classList.contains('dark') ? color.dark : color.light;
+                });
+            });
+        </script>
 
         <div class="flex justify-between items-center">
             <div id="selection-count" class="text-sm text-gray-600 dark:text-gray-400">
@@ -114,15 +139,19 @@
 
 <style>
     .player-select.selected {
-        border-color: #3b82f6 !important;
-        background-color: #eff6ff !important;
-        color: #1d4ed8 !important;
-        font-weight: 600 !important;
+        border-color: #667eea !important;
+        background: linear-gradient(135deg, #667eea15, #764ba215) !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2) !important;
+        transform: scale(1.02);
     }
     .dark .player-select.selected {
-        border-color: #60a5fa !important;
-        background-color: rgba(30, 58, 138, 0.3) !important;
-        color: #93c5fd !important;
+        border-color: #818cf8 !important;
+        background: linear-gradient(135deg, #667eea25, #764ba225) !important;
+        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.3) !important;
+    }
+    
+    .player-chip:hover:not(.selected) {
+        border-color: #667eea50 !important;
     }
     
     .mode-btn {
@@ -152,6 +181,43 @@
     const selectedPlayers = new Set();
     const playerNames = new Map();
     let currentMode = 'random'; // 'random' or 'balanced'
+    
+    // Generate deterministic color from player name
+    function getPlayerColor(name) {
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        
+        // Predefined pleasant colors for light and dark mode
+        const colors = [
+            { light: '#ef4444', dark: '#f87171', name: 'red' },      // Red
+            { light: '#f97316', dark: '#fb923c', name: 'orange' },   // Orange
+            { light: '#f59e0b', dark: '#fbbf24', name: 'amber' },    // Amber
+            { light: '#84cc16', dark: '#a3e635', name: 'lime' },     // Lime
+            { light: '#10b981', dark: '#34d399', name: 'emerald' },  // Emerald
+            { light: '#14b8a6', dark: '#2dd4bf', name: 'teal' },     // Teal
+            { light: '#06b6d4', dark: '#22d3ee', name: 'cyan' },     // Cyan
+            { light: '#3b82f6', dark: '#60a5fa', name: 'blue' },     // Blue
+            { light: '#6366f1', dark: '#818cf8', name: 'indigo' },   // Indigo
+            { light: '#8b5cf6', dark: '#a78bfa', name: 'violet' },   // Violet
+            { light: '#a855f7', dark: '#c084fc', name: 'purple' },   // Purple
+            { light: '#d946ef', dark: '#e879f9', name: 'fuchsia' },  // Fuchsia
+            { light: '#ec4899', dark: '#f472b6', name: 'pink' },     // Pink
+        ];
+        
+        const index = Math.abs(hash) % colors.length;
+        return colors[index];
+    }
+    
+    // Get player initials
+    function getPlayerInitials(name) {
+        const parts = name.trim().split(/\s+/);
+        if (parts.length === 1) {
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
     
     function setMode(mode) {
         currentMode = mode;
